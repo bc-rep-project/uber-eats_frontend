@@ -3,21 +3,21 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#00A082', // UberEats green
-      light: '#33B39E',
-      dark: '#007057',
+      main: '#000000', // Update to black for UberEats' current branding
+      light: '#333333',
+      dark: '#000000',
       contrastText: '#fff',
     },
     secondary: {
-      main: '#276EF1', // Blue
-      light: '#527AF3',
-      dark: '#1B4DA8',
+      main: '#06C167', // UberEats green for CTAs
+      light: '#34D186',
+      dark: '#05944F',
       contrastText: '#fff',
     },
     error: {
-      main: '#E11900', // Red
-      light: '#E74C3C',
-      dark: '#B71C1C',
+      main: '#FF3346', // UberEats red
+      light: '#FF6674',
+      dark: '#CC0013',
     },
     warning: {
       main: '#FFC043', // Yellow
@@ -33,16 +33,25 @@ const theme = createTheme({
       default: '#FFFFFF',
       paper: '#F6F6F6',
     },
+    grey: {
+      100: '#EAEBEB',
+      200: '#D4D5D5',
+      300: '#BDBEBE',
+      400: '#A7A8A8',
+      500: '#909191',
+    },
   },
   typography: {
-    fontFamily: '"UberMove", "Helvetica Neue", Arial, sans-serif',
+    fontFamily: '"UberMove", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     h1: {
-      fontSize: '2.5rem',
+      fontSize: '2rem',
       fontWeight: 700,
+      letterSpacing: '-0.5px',
     },
     h2: {
-      fontSize: '2rem',
+      fontSize: '1.5rem',
       fontWeight: 600,
+      letterSpacing: '-0.5px',
     },
     h3: {
       fontSize: '1.75rem',
@@ -62,15 +71,15 @@ const theme = createTheme({
     },
     subtitle1: {
       fontSize: '1rem',
-      fontWeight: 400,
+      color: '#545454',
     },
     subtitle2: {
       fontSize: '0.875rem',
       fontWeight: 500,
     },
     body1: {
-      fontSize: '1rem',
-      fontWeight: 400,
+      fontSize: '0.875rem',
+      lineHeight: 1.5,
     },
     body2: {
       fontSize: '0.875rem',
@@ -88,13 +97,14 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
-          padding: '8px 24px',
-          fontSize: '1rem',
+          textTransform: 'none',
+          fontWeight: 500,
+          padding: '12px 24px',
         },
-        containedPrimary: {
+        contained: {
+          boxShadow: 'none',
           '&:hover': {
-            backgroundColor: '#007057',
+            boxShadow: 'none',
           },
         },
       },
