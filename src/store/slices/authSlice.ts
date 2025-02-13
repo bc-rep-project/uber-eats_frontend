@@ -1,5 +1,13 @@
 import { createSlice, createAsyncThunk, PayloadAction, ActionReducerMapBuilder } from '@reduxjs/toolkit';
 
+interface Address {
+  type: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+}
+
 interface User {
   id: number;
   email: string;
@@ -9,6 +17,7 @@ interface User {
   address?: string;
   paymentMethod?: 'credit_card' | 'cash';
   specialInstructions?: string;
+  savedAddresses?: Address[];
 }
 
 interface LoginCredentials {

@@ -28,14 +28,16 @@ import {
   Add as AddIcon,
 } from '@mui/icons-material';
 import { RootState } from '../../store';
-import { updateUser } from '../../store/slices/authSlice';
+import { updateUserProfile } from '../../store/slices/authSlice';
+import { User, Address } from '../../types/auth';
 
-interface AddressFormData {
-  type: string;
-  address: string;
-  city: string;
-  state: string;
-  zip: string;
+interface UserFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  address?: string;
+  paymentMethod?: 'credit_card' | 'cash';
+  specialInstructions?: string;
 }
 
 const Profile: React.FC = () => {
@@ -44,13 +46,15 @@ const Profile: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showAddressDialog, setShowAddressDialog] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    first_name: user?.first_name || '',
-    last_name: user?.last_name || '',
+  const [formData, setFormData] = useState<UserFormData>({
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
     email: user?.email || '',
-    phone_number: user?.phone_number || '',
+    address: user?.address || '',
+    paymentMethod: user?.paymentMethod || 'credit_card',
+    specialInstructions: user?.specialInstructions || '',
   });
-  const [addressForm, setAddressForm] = useState<AddressFormData>({
+  const [addressForm, setAddressForm] = useState<Address>({
     type: 'home',
     address: '',
     city: '',
@@ -77,7 +81,7 @@ const Profile: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await dispatch(updateUser(formData));
+      await dispatch(updateUserProfile(formData));
       setIsEditing(false);
       setError(null);
     } catch (err) {
@@ -87,9 +91,9 @@ const Profile: React.FC = () => {
 
   const handleAddAddress = async () => {
     try {
-      await dispatch(updateUser({
+      await dispatch(updateUserProfile({
         ...user,
-        saved_addresses: [...(user?.saved_addresses || []), addressForm],
+        savedAddresses: [...(user?.savedAddresses || []), addressForm],
       }));
       setShowAddressDialog(false);
       setAddressForm({
@@ -107,11 +111,11 @@ const Profile: React.FC = () => {
 
   const handleDeleteAddress = async (index: number) => {
     try {
-      const updatedAddresses = [...(user?.saved_addresses || [])];
+      const updatedAddresses = [...(user?.savedAddresses || [])];
       updatedAddresses.splice(index, 1);
-      await dispatch(updateUser({
+      await dispatch(updateUserProfile({
         ...user,
-        saved_addresses: updatedAddresses,
+        savedAddresses: updatedAddresses,
       }));
       setError(null);
     } catch (err) {
@@ -150,8 +154,8 @@ const Profile: React.FC = () => {
                   <TextField
                     fullWidth
                     label="First Name"
-                    name="first_name"
-                    value={formData.first_name}
+                    name="firstName"
+                    value={formData.firstName}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                   />
@@ -160,8 +164,8 @@ const Profile: React.FC = () => {
                   <TextField
                     fullWidth
                     label="Last Name"
-                    name="last_name"
-                    value={formData.last_name}
+                    name="lastName"
+                    value={formData.lastName}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                   />
@@ -180,11 +184,23 @@ const Profile: React.FC = () => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="Phone Number"
-                    name="phone_number"
-                    value={formData.phone_number}
+                    label="Address"
+                    name="address"
+                    value={formData.address}
                     onChange={handleInputChange}
                     disabled={!isEditing}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Special Instructions"
+                    name="specialInstructions"
+                    value={formData.specialInstructions}
+                    onChange={handleInputChange}
+                    disabled={!isEditing}
+                    multiline
+                    rows={3}
                   />
                 </Grid>
               </Grid>
@@ -214,7 +230,7 @@ const Profile: React.FC = () => {
             </Box>
 
             <List>
-              {user?.saved_addresses?.map((address, index) => (
+              {user?.savedAddresses?.map((address: Address, index: number) => (
                 <React.Fragment key={index}>
                   <ListItem>
                     <ListItemText
@@ -231,7 +247,7 @@ const Profile: React.FC = () => {
                       </IconButton>
                     </ListItemSecondaryAction>
                   </ListItem>
-                  {index < (user.saved_addresses?.length || 0) - 1 && <Divider />}
+                  {index < (user.savedAddresses?.length || 0) - 1 && <Divider />}
                 </React.Fragment>
               ))}
             </List>
@@ -241,41 +257,22 @@ const Profile: React.FC = () => {
         <Grid item xs={12} md={4}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
-              Preferences
+              Payment Method
             </Typography>
             <FormControlLabel
               control={
                 <Switch
-                  checked={user?.preferences?.notifications || false}
+                  checked={formData.paymentMethod === 'credit_card'}
                   onChange={(e) =>
-                    dispatch(updateUser({
-                      ...user,
-                      preferences: {
-                        ...user?.preferences,
-                        notifications: e.target.checked,
-                      },
+                    setFormData(prev => ({
+                      ...prev,
+                      paymentMethod: e.target.checked ? 'credit_card' : 'cash'
                     }))
                   }
+                  disabled={!isEditing}
                 />
               }
-              label="Push Notifications"
-            />
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={user?.preferences?.dark_mode || false}
-                  onChange={(e) =>
-                    dispatch(updateUser({
-                      ...user,
-                      preferences: {
-                        ...user?.preferences,
-                        dark_mode: e.target.checked,
-                      },
-                    }))
-                  }
-                />
-              }
-              label="Dark Mode"
+              label="Credit Card"
             />
           </Paper>
         </Grid>

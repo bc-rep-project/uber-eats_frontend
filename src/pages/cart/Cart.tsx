@@ -39,12 +39,12 @@ const Cart: React.FC = () => {
   const tax = subtotal * 0.08; // 8% tax
   const total = subtotal + deliveryFee + serviceFee + tax + tip;
 
-  const handleQuantityChange = (itemId: string, quantity: number) => {
+  const handleQuantityChange = (itemId: number, quantity: number) => {
     dispatch(updateQuantity({ id: itemId, quantity }));
   };
 
-  const handleRemoveItem = (itemId: string) => {
-    dispatch(removeItem({ id: itemId }));
+  const handleRemoveItem = (itemId: number) => {
+    dispatch(removeItem(itemId));
   };
 
   const handleCheckout = () => {
@@ -133,7 +133,10 @@ const Cart: React.FC = () => {
                         <IconButton
                           size="small"
                           onClick={() =>
-                            handleQuantityChange(item.id, Math.max(0, item.quantity - 1))
+                            handleQuantityChange(
+                              item.id,
+                              Math.max(0, item.quantity - 1)
+                            )
                           }
                         >
                           <RemoveIcon />
