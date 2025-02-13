@@ -5,6 +5,7 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
+  role: string;
 }
 
 interface LoginCredentials {
@@ -54,6 +55,7 @@ export const login = createAsyncThunk<AuthResponse, LoginCredentials>(
               email: credentials.email,
               firstName: 'John',
               lastName: 'Doe',
+              role: 'customer', // Default role for logged-in users
             },
             token: 'dummy-token',
           });
@@ -82,6 +84,7 @@ export const register = createAsyncThunk<AuthResponse, RegisterCredentials>(
               email: credentials.email,
               firstName: credentials.firstName,
               lastName: credentials.lastName,
+              role: 'customer', // Default role for new users
             },
             token: 'dummy-token',
           });
