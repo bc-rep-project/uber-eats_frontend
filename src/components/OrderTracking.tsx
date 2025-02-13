@@ -20,8 +20,8 @@ const orderSteps = [
   { status: OrderStatus.PENDING, label: 'Order Placed' },
   { status: OrderStatus.CONFIRMED, label: 'Order Confirmed' },
   { status: OrderStatus.PREPARING, label: 'Preparing' },
-  { status: OrderStatus.READY, label: 'Ready for Pickup' },
-  { status: OrderStatus.PICKED_UP, label: 'Out for Delivery' },
+  { status: OrderStatus.READY_FOR_PICKUP, label: 'Ready for Pickup' },
+  { status: OrderStatus.OUT_FOR_DELIVERY, label: 'Out for Delivery' },
   { status: OrderStatus.DELIVERED, label: 'Delivered' },
 ];
 
