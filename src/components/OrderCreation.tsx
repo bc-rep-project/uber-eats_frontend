@@ -21,11 +21,11 @@ import {
   CircularProgress,
   Alert,
 } from '@mui/material';
-import { useAuth } from '../contexts/AuthContext';
+import { useAppSelector } from '../hooks/useAppSelector';
 import { socket } from '../services/socket';
 
 // Initialize Stripe
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY!);
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY || '');
 
 interface OrderCreationProps {
   restaurantId: string;
@@ -47,86 +47,58 @@ const CheckoutForm = ({
 }: OrderCreationProps & { onSuccess: () => void }) => {
   const stripe = useStripe();
   const elements = useElements();
-  const { user } = useAuth();
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState('credit_card');
-  const [deliveryAddress, setDeliveryAddress] = useState('');
-  const [specialInstructions, setSpecialInstructions] = useState('');
+  const [orderCreated, setOrderCreated] = useState(false);
+  const { user } = useAppSelector((state) => state.auth);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setProcessing(true);
 
-    const orderData = {
-      restaurant_id: restaurantId,
-      items: cartItems,
-      delivery_info: {
-        address: deliveryAddress,
-        // Add more delivery info as needed
-      },
-      payment_info: {
-        method: paymentMethod,
-        subtotal,
-        tax,
-        delivery_fee: deliveryFee,
-        service_fee: serviceFee,
-        total: subtotal + tax + deliveryFee + serviceFee,
-      },
-      special_instructions: specialInstructions,
-      estimated_preparation_time: 30, // Default value, can be calculated based on items
-    };
+    if (!stripe || !elements || !user) {
+      return;
+    }
+
+    setProcessing(true);
+    setError(null);
 
     try {
-      // Create order
-      const response = await fetch('/api/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(orderData),
+      const cardElement = elements.getElement(CardElement);
+      if (!cardElement) {
+        throw new Error('Card element not found');
+      }
+
+      // Create payment method
+      const { error: stripeError, paymentMethod } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardElement,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to create order');
+      if (stripeError) {
+        throw new Error(stripeError.message);
       }
 
-      if (paymentMethod === 'credit_card') {
-        if (!stripe || !elements) {
-          throw new Error('Stripe not initialized');
-        }
+      // Create order
+      const order = {
+        items: cartItems,
+        total: subtotal + tax + deliveryFee + serviceFee,
+        restaurantId,
+        userId: user.id,
+        paymentMethodId: paymentMethod.id,
+      };
 
-        const cardElement = elements.getElement(CardElement);
-        if (!cardElement) {
-          throw new Error('Card element not found');
-        }
+      // TODO: Replace with actual API call
+      // Simulate order creation
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(
-          data.client_secret,
-          {
-            payment_method: {
-              card: cardElement,
-              billing_details: {
-                email: user?.email,
-              },
-            },
-          }
-        );
+      // Emit order created event
+      socket.emit('order:created', order);
 
-        if (stripeError) {
-          throw new Error(stripeError.message);
-        }
-      }
-
-      // Join order notification room
-      socket.emit('join', { rooms: [`order_${data.order_id}`] });
-
+      setOrderCreated(true);
       onSuccess();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setProcessing(false);
     }
@@ -141,16 +113,20 @@ const CheckoutForm = ({
             fullWidth
             required
             label="Delivery Address"
-            value={deliveryAddress}
-            onChange={(e) => setDeliveryAddress(e.target.value)}
+            value={user?.address}
+            onChange={(e) => {
+              // Handle address change
+            }}
           />
         </Grid>
 
         <Grid item xs={12}>
           <Typography variant="h6">Payment Method</Typography>
           <RadioGroup
-            value={paymentMethod}
-            onChange={(e) => setPaymentMethod(e.target.value)}
+            value={user?.paymentMethod}
+            onChange={(e) => {
+              // Handle payment method change
+            }}
           >
             <FormControlLabel
               value="credit_card"
@@ -165,7 +141,7 @@ const CheckoutForm = ({
           </RadioGroup>
         </Grid>
 
-        {paymentMethod === 'credit_card' && (
+        {user?.paymentMethod === 'credit_card' && (
           <Grid item xs={12}>
             <CardElement
               options={{
@@ -193,8 +169,10 @@ const CheckoutForm = ({
             multiline
             rows={3}
             label="Special Instructions"
-            value={specialInstructions}
-            onChange={(e) => setSpecialInstructions(e.target.value)}
+            value={user?.specialInstructions}
+            onChange={(e) => {
+              // Handle special instructions change
+            }}
           />
         </Grid>
 
@@ -223,7 +201,7 @@ const CheckoutForm = ({
             variant="contained"
             color="primary"
             fullWidth
-            disabled={processing}
+            disabled={!stripe || processing}
           >
             {processing ? (
               <CircularProgress size={24} color="inherit" />
