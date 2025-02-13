@@ -10,22 +10,32 @@ import {
   Container,
   Alert,
   Grid,
+  Link,
 } from '@mui/material';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { register } from '../../store/slices/authSlice';
 
+interface RegisterFormValues {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  phone_number: string;
+}
+
 const validationSchema = Yup.object({
-  first_name: Yup.string()
+  firstName: Yup.string()
     .required('First name is required'),
-  last_name: Yup.string()
+  lastName: Yup.string()
     .required('Last name is required'),
   email: Yup.string()
     .email('Invalid email address')
     .required('Email is required'),
   password: Yup.string()
-    .min(6, 'Password must be at least 6 characters')
+    .min(8, 'Password must be at least 8 characters')
     .required('Password is required'),
-  confirm_password: Yup.string()
+  confirmPassword: Yup.string()
     .oneOf([Yup.ref('password')], 'Passwords must match')
     .required('Confirm password is required'),
   phone_number: Yup.string()
@@ -36,19 +46,19 @@ const RegisterForm: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const formik = useFormik({
+  const formik = useFormik<RegisterFormValues>({
     initialValues: {
-      first_name: '',
-      last_name: '',
+      firstName: '',
+      lastName: '',
       email: '',
       password: '',
-      confirm_password: '',
+      confirmPassword: '',
       phone_number: '',
     },
     validationSchema,
     onSubmit: async (values, { setSubmitting, setFieldError }) => {
       try {
-        const { confirm_password, ...registerData } = values;
+        const { confirmPassword, ...registerData } = values;
         await dispatch(register(registerData)).unwrap();
         navigate('/');
       } catch (error: any) {
@@ -82,30 +92,32 @@ const RegisterForm: React.FC = () => {
             <Grid item xs={12} sm={6}>
               <TextField
                 autoComplete="given-name"
-                name="first_name"
+                name="firstName"
                 required
                 fullWidth
-                id="first_name"
+                id="firstName"
                 label="First Name"
                 autoFocus
-                value={formik.values.first_name}
+                value={formik.values.firstName}
                 onChange={formik.handleChange}
-                error={formik.touched.first_name && Boolean(formik.errors.first_name)}
-                helperText={formik.touched.first_name && formik.errors.first_name}
+                onBlur={formik.handleBlur}
+                error={formik.touched.firstName && Boolean(formik.errors.firstName)}
+                helperText={formik.touched.firstName && formik.errors.firstName}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
                 required
                 fullWidth
-                id="last_name"
+                id="lastName"
                 label="Last Name"
-                name="last_name"
+                name="lastName"
                 autoComplete="family-name"
-                value={formik.values.last_name}
+                value={formik.values.lastName}
                 onChange={formik.handleChange}
-                error={formik.touched.last_name && Boolean(formik.errors.last_name)}
-                helperText={formik.touched.last_name && formik.errors.last_name}
+                onBlur={formik.handleBlur}
+                error={formik.touched.lastName && Boolean(formik.errors.lastName)}
+                helperText={formik.touched.lastName && formik.errors.lastName}
               />
             </Grid>
             <Grid item xs={12}>
@@ -118,6 +130,7 @@ const RegisterForm: React.FC = () => {
                 autoComplete="email"
                 value={formik.values.email}
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 error={formik.touched.email && Boolean(formik.errors.email)}
                 helperText={formik.touched.email && formik.errors.email}
               />
@@ -133,6 +146,7 @@ const RegisterForm: React.FC = () => {
                 autoComplete="new-password"
                 value={formik.values.password}
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 error={formik.touched.password && Boolean(formik.errors.password)}
                 helperText={formik.touched.password && formik.errors.password}
               />
@@ -141,14 +155,15 @@ const RegisterForm: React.FC = () => {
               <TextField
                 required
                 fullWidth
-                name="confirm_password"
+                name="confirmPassword"
                 label="Confirm Password"
                 type="password"
-                id="confirm_password"
-                value={formik.values.confirm_password}
+                id="confirmPassword"
+                value={formik.values.confirmPassword}
                 onChange={formik.handleChange}
-                error={formik.touched.confirm_password && Boolean(formik.errors.confirm_password)}
-                helperText={formik.touched.confirm_password && formik.errors.confirm_password}
+                onBlur={formik.handleBlur}
+                error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
+                helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
               />
             </Grid>
             <Grid item xs={12}>
@@ -174,13 +189,11 @@ const RegisterForm: React.FC = () => {
           >
             Sign Up
           </Button>
-          <Button
-            fullWidth
-            variant="text"
-            onClick={() => navigate('/login')}
-          >
-            Already have an account? Sign in
-          </Button>
+          <Box sx={{ textAlign: 'center' }}>
+            <Link href="/login" variant="body2">
+              Already have an account? Sign in
+            </Link>
+          </Box>
         </Box>
       </Box>
     </Container>

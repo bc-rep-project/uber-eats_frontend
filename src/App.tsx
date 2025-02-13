@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import Home from './pages/home/Home';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
 
 // Create a theme instance
 const theme = createTheme({
@@ -62,6 +64,8 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/grocery" element={<div>Grocery Page</div>} />
           <Route path="/browse" element={<div>Browse Page</div>} />
           <Route path="/carts" element={<div>Carts Page</div>} />
