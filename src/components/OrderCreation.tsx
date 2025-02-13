@@ -22,6 +22,8 @@ import {
   Alert,
 } from '@mui/material';
 import { useAppSelector } from '../hooks/useAppSelector';
+import { useAppDispatch } from '../hooks/useAppDispatch';
+import { updateUserProfile } from '../store/slices/authSlice';
 import { socket } from '../services/socket';
 
 // Initialize Stripe
@@ -48,6 +50,7 @@ const CheckoutForm = ({
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [orderCreated, setOrderCreated] = useState(false);
@@ -104,6 +107,18 @@ const CheckoutForm = ({
     }
   };
 
+  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(updateUserProfile({ address: e.target.value }));
+  };
+
+  const handlePaymentMethodChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(updateUserProfile({ paymentMethod: e.target.value as 'credit_card' | 'cash' }));
+  };
+
+  const handleSpecialInstructionsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(updateUserProfile({ specialInstructions: e.target.value }));
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <Grid container spacing={3}>
@@ -113,20 +128,16 @@ const CheckoutForm = ({
             fullWidth
             required
             label="Delivery Address"
-            value={user?.address}
-            onChange={(e) => {
-              // Handle address change
-            }}
+            value={user?.address || ''}
+            onChange={handleAddressChange}
           />
         </Grid>
 
         <Grid item xs={12}>
           <Typography variant="h6">Payment Method</Typography>
           <RadioGroup
-            value={user?.paymentMethod}
-            onChange={(e) => {
-              // Handle payment method change
-            }}
+            value={user?.paymentMethod || 'credit_card'}
+            onChange={handlePaymentMethodChange}
           >
             <FormControlLabel
               value="credit_card"
@@ -169,10 +180,8 @@ const CheckoutForm = ({
             multiline
             rows={3}
             label="Special Instructions"
-            value={user?.specialInstructions}
-            onChange={(e) => {
-              // Handle special instructions change
-            }}
+            value={user?.specialInstructions || ''}
+            onChange={handleSpecialInstructionsChange}
           />
         </Grid>
 

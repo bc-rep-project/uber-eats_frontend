@@ -6,6 +6,9 @@ interface User {
   firstName: string;
   lastName: string;
   role: string;
+  address?: string;
+  paymentMethod?: 'credit_card' | 'cash';
+  specialInstructions?: string;
 }
 
 interface LoginCredentials {
@@ -55,7 +58,10 @@ export const login = createAsyncThunk<AuthResponse, LoginCredentials>(
               email: credentials.email,
               firstName: 'John',
               lastName: 'Doe',
-              role: 'customer', // Default role for logged-in users
+              role: 'customer',
+              address: '',
+              paymentMethod: 'credit_card',
+              specialInstructions: '',
             },
             token: 'dummy-token',
           });
@@ -84,7 +90,10 @@ export const register = createAsyncThunk<AuthResponse, RegisterCredentials>(
               email: credentials.email,
               firstName: credentials.firstName,
               lastName: credentials.lastName,
-              role: 'customer', // Default role for new users
+              role: 'customer',
+              address: '',
+              paymentMethod: 'credit_card',
+              specialInstructions: '',
             },
             token: 'dummy-token',
           });
@@ -117,6 +126,11 @@ const authSlice = createSlice({
     },
     setError: (state: AuthState, action: PayloadAction<string | null>) => {
       state.error = action.payload;
+    },
+    updateUserProfile: (state: AuthState, action: PayloadAction<Partial<User>>) => {
+      if (state.user) {
+        state.user = { ...state.user, ...action.payload };
+      }
     },
     logout: (state: AuthState) => {
       state.user = null;
@@ -162,5 +176,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUser, setToken, setLoading, setError, logout } = authSlice.actions;
+export const { setUser, setToken, setLoading, setError, updateUserProfile, logout } = authSlice.actions;
 export default authSlice.reducer; 
