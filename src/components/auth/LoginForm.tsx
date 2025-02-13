@@ -40,8 +40,12 @@ const LoginForm = () => {
     onSubmit: async (values) => {
       try {
         setError(null);
-        await dispatch(login(values)).unwrap();
-        navigate('/dashboard');
+        const resultAction = await dispatch(login(values));
+        if (login.fulfilled.match(resultAction)) {
+          navigate('/dashboard');
+        } else if (login.rejected.match(resultAction)) {
+          setError(resultAction.error.message || 'Login failed');
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Login failed');
       }
