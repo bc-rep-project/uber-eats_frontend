@@ -24,6 +24,7 @@ interface AuthState {
   token: string | null;
   loading: boolean;
   error: string | null;
+  isAuthenticated: boolean;
 }
 
 interface AuthResponse {
@@ -36,6 +37,7 @@ const initialState: AuthState = {
   token: localStorage.getItem('token'),
   loading: false,
   error: null,
+  isAuthenticated: !!localStorage.getItem('token'),
 };
 
 // Async thunk for login
@@ -100,10 +102,12 @@ const authSlice = createSlice({
   reducers: {
     setUser: (state: AuthState, action: PayloadAction<User>) => {
       state.user = action.payload;
+      state.isAuthenticated = true;
     },
     setToken: (state: AuthState, action: PayloadAction<string>) => {
       state.token = action.payload;
       localStorage.setItem('token', action.payload);
+      state.isAuthenticated = true;
     },
     setLoading: (state: AuthState, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
@@ -114,6 +118,7 @@ const authSlice = createSlice({
     logout: (state: AuthState) => {
       state.user = null;
       state.token = null;
+      state.isAuthenticated = false;
       localStorage.removeItem('token');
     },
   },
@@ -128,10 +133,12 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.isAuthenticated = true;
       })
       .addCase(login.rejected, (state: AuthState, action: any) => {
         state.loading = false;
         state.error = action.error.message || 'Login failed';
+        state.isAuthenticated = false;
       })
       // Register cases
       .addCase(register.pending, (state: AuthState) => {
@@ -142,10 +149,12 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.isAuthenticated = true;
       })
       .addCase(register.rejected, (state: AuthState, action: any) => {
         state.loading = false;
         state.error = action.error.message || 'Registration failed';
+        state.isAuthenticated = false;
       });
   },
 });
