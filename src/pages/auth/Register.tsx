@@ -14,7 +14,7 @@ import {
   Grid,
 } from '@mui/material';
 import { register } from '../../store/slices/authSlice';
-import { RootState } from '../../store';
+import { RootState, AppDispatch } from '../../store';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -46,7 +46,7 @@ const validationSchema = Yup.object({
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { loading, error } = useSelector((state: RootState) => state.auth);
 
   return (
