@@ -2,9 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
+import { Provider } from 'react-redux';
+import { store } from './store';
 import Home from './pages/home/Home';
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
 
 // Create a theme instance
 const theme = createTheme({
@@ -59,20 +59,20 @@ const theme = createTheme({
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/grocery" element={<div>Grocery Page</div>} />
-          <Route path="/browse" element={<div>Browse Page</div>} />
-          <Route path="/carts" element={<div>Carts Page</div>} />
-          <Route path="/account" element={<div>Account Page</div>} />
-        </Routes>
-      </Router>
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/grocery" element={<div>Grocery Page</div>} />
+            <Route path="/browse" element={<div>Browse Page</div>} />
+            <Route path="/carts" element={<div>Carts Page</div>} />
+            <Route path="/account" element={<div>Account Page</div>} />
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </Provider>
   );
 }
 

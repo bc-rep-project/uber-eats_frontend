@@ -9,22 +9,16 @@ import {
   Typography,
   Container,
   Alert,
-  Link,
 } from '@mui/material';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { login } from '../../store/slices/authSlice';
-
-interface LoginFormValues {
-  email: string;
-  password: string;
-}
 
 const validationSchema = Yup.object({
   email: Yup.string()
     .email('Invalid email address')
     .required('Email is required'),
   password: Yup.string()
-    .min(8, 'Password must be at least 8 characters')
+    .min(6, 'Password must be at least 6 characters')
     .required('Password is required'),
 });
 
@@ -32,12 +26,12 @@ const LoginForm: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const formik = useFormik<LoginFormValues>({
+  const formik = useFormik({
     initialValues: {
       email: '',
       password: '',
     },
-    validationSchema: validationSchema,
+    validationSchema,
     onSubmit: async (values, { setSubmitting, setFieldError }) => {
       try {
         await dispatch(login(values)).unwrap();
@@ -80,7 +74,6 @@ const LoginForm: React.FC = () => {
             autoFocus
             value={formik.values.email}
             onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
             error={formik.touched.email && Boolean(formik.errors.email)}
             helperText={formik.touched.email && formik.errors.email}
           />
@@ -95,7 +88,6 @@ const LoginForm: React.FC = () => {
             autoComplete="current-password"
             value={formik.values.password}
             onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
             error={formik.touched.password && Boolean(formik.errors.password)}
             helperText={formik.touched.password && formik.errors.password}
           />
@@ -108,11 +100,13 @@ const LoginForm: React.FC = () => {
           >
             Sign In
           </Button>
-          <Box sx={{ textAlign: 'center' }}>
-            <Link href="/register" variant="body2">
-              {"Don't have an account? Sign Up"}
-            </Link>
-          </Box>
+          <Button
+            fullWidth
+            variant="text"
+            onClick={() => navigate('/register')}
+          >
+            Don't have an account? Sign Up
+          </Button>
         </Box>
       </Box>
     </Container>

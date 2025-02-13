@@ -1,11 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
+import restaurantReducer from './slices/restaurantSlice';
+import cartReducer from './slices/cartSlice';
+import authReducer from './slices/authSlice';
 
-// Create a store with an empty reducer for now
-const store = configureStore({
-  reducer: {},
+export const store = configureStore({
+  reducer: {
+    restaurant: restaurantReducer,
+    cart: cartReducer,
+    auth: authReducer,
+  },
 });
 
 export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
-
-export { store }; 
+export type AppDispatch = typeof store.dispatch; 
