@@ -1,6 +1,7 @@
 import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '../store';
+import type { ThunkDispatch } from 'redux-thunk';
+import type { AnyAction } from '@reduxjs/toolkit';
+import type { RootState } from '../store';
 
 // Use throughout your app instead of plain `useDispatch`
-type DispatchFunc = () => AppDispatch;
-export const useAppDispatch: DispatchFunc = useDispatch; 
+export const useAppDispatch = () => useDispatch<ThunkDispatch<RootState, unknown, AnyAction>>(); 
