@@ -26,13 +26,13 @@ const restaurantSlice = createSlice({
   name: 'restaurant',
   initialState,
   reducers: {
-    setRestaurants: (state, action: PayloadAction<Restaurant[]>) => {
+    setRestaurants: (state: RestaurantState, action: PayloadAction<Restaurant[]>) => {
       state.restaurants = action.payload;
     },
-    setLoading: (state, action: PayloadAction<boolean>) => {
+    setLoading: (state: RestaurantState, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
-    setError: (state, action: PayloadAction<string | null>) => {
+    setError: (state: RestaurantState, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
   },
