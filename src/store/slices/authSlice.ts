@@ -12,6 +12,13 @@ interface LoginCredentials {
   password: string;
 }
 
+interface RegisterCredentials {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+}
+
 interface AuthState {
   user: User | null;
   token: string | null;
@@ -19,7 +26,7 @@ interface AuthState {
   error: string | null;
 }
 
-interface LoginResponse {
+interface AuthResponse {
   user: User;
   token: string;
 }
@@ -32,12 +39,12 @@ const initialState: AuthState = {
 };
 
 // Async thunk for login
-export const login = createAsyncThunk<LoginResponse, LoginCredentials>(
+export const login = createAsyncThunk<AuthResponse, LoginCredentials>(
   'auth/login',
-  async (credentials) => {
+  async (credentials: LoginCredentials) => {
     try {
       // TODO: Replace with actual API call
-      const response = await new Promise<LoginResponse>((resolve) => {
+      const response = await new Promise<AuthResponse>((resolve) => {
         setTimeout(() => {
           resolve({
             user: {
@@ -55,6 +62,34 @@ export const login = createAsyncThunk<LoginResponse, LoginCredentials>(
       return response;
     } catch (error) {
       throw new Error('Login failed');
+    }
+  }
+);
+
+// Async thunk for register
+export const register = createAsyncThunk<AuthResponse, RegisterCredentials>(
+  'auth/register',
+  async (credentials: RegisterCredentials) => {
+    try {
+      // TODO: Replace with actual API call
+      const response = await new Promise<AuthResponse>((resolve) => {
+        setTimeout(() => {
+          resolve({
+            user: {
+              id: 1,
+              email: credentials.email,
+              firstName: credentials.firstName,
+              lastName: credentials.lastName,
+            },
+            token: 'dummy-token',
+          });
+        }, 1000);
+      });
+
+      localStorage.setItem('token', response.token);
+      return response;
+    } catch (error) {
+      throw new Error('Registration failed');
     }
   }
 );
@@ -84,18 +119,33 @@ const authSlice = createSlice({
   },
   extraReducers: (builder: ActionReducerMapBuilder<AuthState>) => {
     builder
-      .addCase(login.pending, (state) => {
+      // Login cases
+      .addCase(login.pending, (state: AuthState) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(login.fulfilled, (state, action: PayloadAction<LoginResponse>) => {
+      .addCase(login.fulfilled, (state: AuthState, action: PayloadAction<AuthResponse>) => {
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
       })
-      .addCase(login.rejected, (state, action) => {
+      .addCase(login.rejected, (state: AuthState, action: any) => {
         state.loading = false;
         state.error = action.error.message || 'Login failed';
+      })
+      // Register cases
+      .addCase(register.pending, (state: AuthState) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(register.fulfilled, (state: AuthState, action: PayloadAction<AuthResponse>) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+      })
+      .addCase(register.rejected, (state: AuthState, action: any) => {
+        state.loading = false;
+        state.error = action.error.message || 'Registration failed';
       });
   },
 });
