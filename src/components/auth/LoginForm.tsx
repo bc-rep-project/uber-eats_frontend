@@ -40,10 +40,8 @@ const LoginForm = () => {
     onSubmit: async (values: LoginFormValues) => {
       try {
         setError(null);
-        const action = await dispatch(login(values));
-        if ('error' in action) {
-          setError(action.error?.message || 'Login failed');
-        } else {
+        const result = await dispatch(login(values)).unwrap();
+        if (result) {
           navigate('/dashboard');
         }
       } catch (err) {
