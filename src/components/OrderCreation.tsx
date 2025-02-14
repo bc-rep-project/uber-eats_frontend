@@ -114,6 +114,11 @@ const CheckoutForm = ({
         deliveryAddress: `${selectedAddress.address}, ${selectedAddress.city}, ${selectedAddress.state} ${selectedAddress.zip}`,
         paymentMethod: selectedPaymentMethod.type,
         specialInstructions,
+        customer: {
+          name: `${user.first_name} ${user.last_name}`,
+          email: user.email,
+          phone: user.phone_number || '',
+        },
       };
 
       // TODO: Replace with actual API call

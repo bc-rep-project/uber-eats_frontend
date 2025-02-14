@@ -29,15 +29,15 @@ import {
 } from '@mui/icons-material';
 import { RootState } from '../../store';
 import { updateUserProfile } from '../../store/slices/authSlice';
-import { User, Address } from '../../types/auth';
+import { User, Address, PaymentMethod } from '../../types/auth';
 
 interface UserFormData {
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   email: string;
-  address?: string;
-  paymentMethod?: 'credit_card' | 'cash';
-  specialInstructions?: string;
+  phone_number?: string;
+  saved_addresses: Address[];
+  payment_methods: PaymentMethod[];
 }
 
 const Profile: React.FC = () => {
@@ -47,12 +47,12 @@ const Profile: React.FC = () => {
   const [showAddressDialog, setShowAddressDialog] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<UserFormData>({
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
+    first_name: user?.first_name || '',
+    last_name: user?.last_name || '',
     email: user?.email || '',
-    address: user?.address || '',
-    paymentMethod: user?.paymentMethod || 'credit_card',
-    specialInstructions: user?.specialInstructions || '',
+    phone_number: user?.phone_number || '',
+    saved_addresses: user?.saved_addresses || [],
+    payment_methods: user?.payment_methods || []
   });
   const [addressForm, setAddressForm] = useState<Address>({
     type: 'home',
@@ -92,8 +92,7 @@ const Profile: React.FC = () => {
   const handleAddAddress = async () => {
     try {
       await dispatch(updateUserProfile({
-        ...user,
-        savedAddresses: [...(user?.savedAddresses || []), addressForm],
+        saved_addresses: [...(user?.saved_addresses || []), addressForm]
       }));
       setShowAddressDialog(false);
       setAddressForm({
@@ -111,11 +110,10 @@ const Profile: React.FC = () => {
 
   const handleDeleteAddress = async (index: number) => {
     try {
-      const updatedAddresses = [...(user?.savedAddresses || [])];
+      const updatedAddresses = [...(user?.saved_addresses || [])];
       updatedAddresses.splice(index, 1);
       await dispatch(updateUserProfile({
-        ...user,
-        savedAddresses: updatedAddresses,
+        saved_addresses: updatedAddresses
       }));
       setError(null);
     } catch (err) {
@@ -154,8 +152,8 @@ const Profile: React.FC = () => {
                   <TextField
                     fullWidth
                     label="First Name"
-                    name="firstName"
-                    value={formData.firstName}
+                    name="first_name"
+                    value={formData.first_name}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                   />
@@ -164,8 +162,8 @@ const Profile: React.FC = () => {
                   <TextField
                     fullWidth
                     label="Last Name"
-                    name="lastName"
-                    value={formData.lastName}
+                    name="last_name"
+                    value={formData.last_name}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                   />
@@ -184,24 +182,53 @@ const Profile: React.FC = () => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="Address"
-                    name="address"
-                    value={formData.address}
+                    label="Phone Number"
+                    name="phone_number"
+                    value={formData.phone_number}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Special Instructions"
-                    name="specialInstructions"
-                    value={formData.specialInstructions}
-                    onChange={handleInputChange}
-                    disabled={!isEditing}
-                    multiline
-                    rows={3}
-                  />
+                  <Typography variant="subtitle1" gutterBottom>
+                    Saved Addresses
+                  </Typography>
+                  <List>
+                    {user?.saved_addresses.map((address, index) => (
+                      <ListItem key={index}>
+                        <ListItemText
+                          primary={address.type}
+                          secondary={`${address.address}, ${address.city}, ${address.state} ${address.zip}`}
+                        />
+                        {isEditing && (
+                          <ListItemSecondaryAction>
+                            <IconButton
+                              edge="end"
+                              aria-label="delete"
+                              onClick={() => handleDeleteAddress(index)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </ListItemSecondaryAction>
+                        )}
+                      </ListItem>
+                    ))}
+                  </List>
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1" gutterBottom>
+                    Payment Methods
+                  </Typography>
+                  <List>
+                    {user?.payment_methods.map((payment, index) => (
+                      <ListItem key={index}>
+                        <ListItemText
+                          primary={payment.type}
+                          secondary={payment.last4 ? `**** **** **** ${payment.last4}` : 'No card details'}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
                 </Grid>
               </Grid>
 
@@ -217,85 +244,20 @@ const Profile: React.FC = () => {
               )}
             </form>
           </Paper>
-
-          <Paper sx={{ p: 3, mt: 3 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-              <Typography variant="h6">Saved Addresses</Typography>
-              <Button
-                startIcon={<AddIcon />}
-                onClick={() => setShowAddressDialog(true)}
-              >
-                Add Address
-              </Button>
-            </Box>
-
-            <List>
-              {user?.savedAddresses?.map((address: Address, index: number) => (
-                <React.Fragment key={index}>
-                  <ListItem>
-                    <ListItemText
-                      primary={address.type.toUpperCase()}
-                      secondary={`${address.address}, ${address.city}, ${address.state} ${address.zip}`}
-                    />
-                    <ListItemSecondaryAction>
-                      <IconButton
-                        edge="end"
-                        aria-label="delete"
-                        onClick={() => handleDeleteAddress(index)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                  {index < (user.savedAddresses?.length || 0) - 1 && <Divider />}
-                </React.Fragment>
-              ))}
-            </List>
-          </Paper>
-        </Grid>
-
-        <Grid item xs={12} md={4}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Payment Method
-            </Typography>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={formData.paymentMethod === 'credit_card'}
-                  onChange={(e) =>
-                    setFormData(prev => ({
-                      ...prev,
-                      paymentMethod: e.target.checked ? 'credit_card' : 'cash'
-                    }))
-                  }
-                  disabled={!isEditing}
-                />
-              }
-              label="Credit Card"
-            />
-          </Paper>
         </Grid>
       </Grid>
 
-      {/* Add Address Dialog */}
-      <Dialog
-        open={showAddressDialog}
-        onClose={() => setShowAddressDialog(false)}
-        maxWidth="sm"
-        fullWidth
-      >
+      <Dialog open={showAddressDialog} onClose={() => setShowAddressDialog(false)}>
         <DialogTitle>Add New Address</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Type"
+                label="Address Type"
                 name="type"
                 value={addressForm.type}
                 onChange={handleAddressInputChange}
-                placeholder="home, work, etc."
               />
             </Grid>
             <Grid item xs={12}>
@@ -316,7 +278,7 @@ const Profile: React.FC = () => {
                 onChange={handleAddressInputChange}
               />
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="State"
@@ -325,7 +287,7 @@ const Profile: React.FC = () => {
                 onChange={handleAddressInputChange}
               />
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 label="ZIP Code"
@@ -339,7 +301,7 @@ const Profile: React.FC = () => {
         <DialogActions>
           <Button onClick={() => setShowAddressDialog(false)}>Cancel</Button>
           <Button onClick={handleAddAddress} variant="contained" color="primary">
-            Add Address
+            Add
           </Button>
         </DialogActions>
       </Dialog>
