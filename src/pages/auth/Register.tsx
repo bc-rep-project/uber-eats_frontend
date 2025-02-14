@@ -64,14 +64,22 @@ const Register: React.FC = () => {
     phone_number: '',
   };
 
-  const handleSubmit = async (values: RegisterFormValues) => {
+  const handleSubmit = async (values: RegisterFormValues, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
     try {
       setError(null);
       const { confirmPassword, ...registerData } = values;
-      await dispatch(register(registerData)).unwrap();
+      await dispatch(register({
+        email: registerData.email,
+        password: registerData.password,
+        first_name: registerData.first_name,
+        last_name: registerData.last_name,
+        phone_number: registerData.phone_number
+      })).unwrap();
       navigate('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
+    } finally {
+      setSubmitting(false);
     }
   };
 
