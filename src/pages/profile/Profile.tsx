@@ -25,7 +25,13 @@ import {
 } from '@mui/icons-material';
 import { RootState } from '../../store';
 import { updateUserProfile } from '../../store/slices/authSlice';
-import { User, Address, PaymentMethod } from '../../types/auth';
+import { User, Address } from '../../types/auth';
+
+// Use the PaymentMethod interface from authSlice
+interface PaymentMethod {
+  method: string;
+  details: string;
+}
 
 interface UserFormData {
   first_name: string;
@@ -226,8 +232,8 @@ const Profile: React.FC = () => {
                     {user?.payment_methods.map((payment, index) => (
                       <ListItem key={index}>
                         <ListItemText
-                          primary={`${payment.type} ending in ${payment.last4}`}
-                          secondary={`Expires ${payment.exp_month}/${payment.exp_year}`}
+                          primary={payment.method}
+                          secondary={payment.details}
                         />
                       </ListItem>
                     ))}
