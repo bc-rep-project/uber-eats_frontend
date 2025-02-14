@@ -48,7 +48,7 @@ const Profile: React.FC = () => {
     email: user?.email || '',
     phone_number: user?.phone_number || '',
     saved_addresses: user?.saved_addresses || [],
-    payment_methods: user?.payment_methods || []
+    payment_methods: []  // Initialize as empty array since we don't edit payment methods here
   });
   const [addressForm, setAddressForm] = useState<Address>({
     type: 'home',
@@ -225,8 +225,8 @@ const Profile: React.FC = () => {
                     {user?.payment_methods.map((payment, index) => (
                       <ListItem key={index}>
                         <ListItemText
-                          primary={payment.method}
-                          secondary={payment.details}
+                          primary={`Card ending in ${payment.last4}`}
+                          secondary={`Expires ${payment.exp_month}/${payment.exp_year}`}
                         />
                       </ListItem>
                     ))}
