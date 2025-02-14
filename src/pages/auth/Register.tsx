@@ -52,7 +52,8 @@ const validationSchema = Yup.object({
 const Register: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { loading, error } = useSelector((state: RootState) => state.auth);
+  const { loading, error: authError } = useSelector((state: RootState) => state.auth);
+  const [error, setError] = useState<string | null>(null);
 
   const initialValues: RegisterFormValues = {
     email: '',
@@ -63,6 +64,17 @@ const Register: React.FC = () => {
     phone_number: '',
   };
 
+  const handleSubmit = async (values: RegisterFormValues) => {
+    try {
+      setError(null);
+      const { confirmPassword, ...registerData } = values;
+      await dispatch(register(registerData)).unwrap();
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Registration failed');
+    }
+  };
+
   return (
     <Container maxWidth="sm">
       <Paper elevation={3} sx={{ p: 4, mt: 8 }}>
@@ -70,32 +82,16 @@ const Register: React.FC = () => {
           Create Account
         </Typography>
 
-        {error && (
+        {(error || authError) && (
           <Alert severity="error" sx={{ mb: 2 }}>
-            {error}
+            {error || authError}
           </Alert>
         )}
 
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={async (values: RegisterFormValues, { setSubmitting }) => {
-            try {
-              const { confirmPassword, ...registerData } = values;
-              await dispatch(register({
-                email: registerData.email,
-                password: registerData.password,
-                first_name: registerData.first_name,
-                last_name: registerData.last_name,
-                phone_number: registerData.phone_number
-              })).unwrap();
-              navigate('/');
-            } catch (error) {
-              // Error is handled by the auth slice
-            } finally {
-              setSubmitting(false);
-            }
-          }}
+          onSubmit={handleSubmit}
         >
           {({ values, errors, touched, handleChange, handleBlur }) => (
             <Form>
