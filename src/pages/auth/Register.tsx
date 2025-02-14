@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form } from 'formik';
@@ -17,7 +17,7 @@ import { register } from '../../store/slices/authSlice';
 import { RootState, AppDispatch } from '../../store';
 import { RegisterData } from '../../types/auth';
 
-interface RegisterFormValues extends Omit<RegisterData, keyof {}> {
+interface RegisterFormValues extends RegisterData {
   confirmPassword: string;
 }
 
