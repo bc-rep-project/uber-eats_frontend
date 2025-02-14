@@ -8,16 +8,29 @@ interface Address {
   zip: string;
 }
 
+interface PaymentMethod {
+  method: string;
+  details: string;
+}
+
 interface User {
-  id: number;
+  _id: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
+  phone_number?: string;
+  is_active: boolean;
+  is_verified: boolean;
   role: string;
-  address?: string;
-  paymentMethod?: 'credit_card' | 'cash';
-  specialInstructions?: string;
-  savedAddresses?: Address[];
+  preferences: {
+    notifications: boolean;
+    language: string;
+    dark_mode: boolean;
+  };
+  saved_addresses: Address[];
+  payment_methods: PaymentMethod[];
+  created_at: string;
+  updated_at: string;
 }
 
 interface LoginCredentials {
@@ -63,14 +76,22 @@ export const login = createAsyncThunk<AuthResponse, LoginCredentials>(
         setTimeout(() => {
           resolve({
             user: {
-              id: 1,
+              _id: '1',
               email: credentials.email,
-              firstName: 'John',
-              lastName: 'Doe',
+              first_name: 'John',
+              last_name: 'Doe',
               role: 'customer',
-              address: '',
-              paymentMethod: 'credit_card',
-              specialInstructions: '',
+              is_active: true,
+              is_verified: true,
+              preferences: {
+                notifications: true,
+                language: 'en',
+                dark_mode: false
+              },
+              saved_addresses: [],
+              payment_methods: [],
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
             },
             token: 'dummy-token',
           });
@@ -95,14 +116,22 @@ export const register = createAsyncThunk<AuthResponse, RegisterCredentials>(
         setTimeout(() => {
           resolve({
             user: {
-              id: 1,
+              _id: '2',
               email: credentials.email,
-              firstName: credentials.firstName,
-              lastName: credentials.lastName,
+              first_name: credentials.firstName,
+              last_name: credentials.lastName,
               role: 'customer',
-              address: '',
-              paymentMethod: 'credit_card',
-              specialInstructions: '',
+              is_active: true,
+              is_verified: false,
+              preferences: {
+                notifications: true,
+                language: 'en',
+                dark_mode: false
+              },
+              saved_addresses: [],
+              payment_methods: [],
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
             },
             token: 'dummy-token',
           });
