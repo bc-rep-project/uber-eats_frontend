@@ -1,62 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction, ActionReducerMapBuilder } from '@reduxjs/toolkit';
-
-interface Address {
-  type: string;
-  address: string;
-  city: string;
-  state: string;
-  zip: string;
-}
-
-interface PaymentMethod {
-  method: string;
-  details: string;
-}
-
-interface User {
-  _id: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-  phone_number?: string;
-  is_active: boolean;
-  is_verified: boolean;
-  role: string;
-  preferences: {
-    notifications: boolean;
-    language: string;
-    dark_mode: boolean;
-  };
-  saved_addresses: Address[];
-  payment_methods: PaymentMethod[];
-  created_at: string;
-  updated_at: string;
-}
-
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-interface RegisterCredentials {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-}
-
-interface AuthState {
-  user: User | null;
-  token: string | null;
-  loading: boolean;
-  error: string | null;
-  isAuthenticated: boolean;
-}
-
-interface AuthResponse {
-  user: User;
-  token: string;
-}
+import { User, Address, PaymentMethod, LoginCredentials, RegisterData, AuthState, AuthResponse } from '../../types/auth';
 
 const initialState: AuthState = {
   user: null,
@@ -107,9 +50,9 @@ export const login = createAsyncThunk<AuthResponse, LoginCredentials>(
 );
 
 // Async thunk for register
-export const register = createAsyncThunk<AuthResponse, RegisterCredentials>(
+export const register = createAsyncThunk<AuthResponse, RegisterData>(
   'auth/register',
-  async (credentials: RegisterCredentials) => {
+  async (credentials: RegisterData) => {
     try {
       // TODO: Replace with actual API call
       const response = await new Promise<AuthResponse>((resolve) => {
@@ -118,8 +61,8 @@ export const register = createAsyncThunk<AuthResponse, RegisterCredentials>(
             user: {
               _id: '2',
               email: credentials.email,
-              first_name: credentials.firstName,
-              last_name: credentials.lastName,
+              first_name: credentials.first_name,
+              last_name: credentials.last_name,
               role: 'customer',
               is_active: true,
               is_verified: false,
