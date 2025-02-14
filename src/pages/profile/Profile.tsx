@@ -82,6 +82,7 @@ const Profile: React.FC = () => {
         last_name: formData.last_name,
         email: formData.email,
         phone_number: formData.phone_number,
+        saved_addresses: formData.saved_addresses
       };
       await dispatch(updateUserProfile(updateData));
       setIsEditing(false);
@@ -225,7 +226,7 @@ const Profile: React.FC = () => {
                     {user?.payment_methods.map((payment, index) => (
                       <ListItem key={index}>
                         <ListItemText
-                          primary={`Card ending in ${payment.last4}`}
+                          primary={`${payment.type} ending in ${payment.last4}`}
                           secondary={`Expires ${payment.exp_month}/${payment.exp_year}`}
                         />
                       </ListItem>
