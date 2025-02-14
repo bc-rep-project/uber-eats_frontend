@@ -19,7 +19,7 @@ export interface User {
 }
 
 export interface Address {
-  type: string;
+  type: 'home' | 'work' | 'other';
   address: string;
   city: string;
   state: string;
@@ -44,6 +44,10 @@ export interface RegisterData {
   first_name: string;
   last_name: string;
   phone_number?: string;
+}
+
+export interface RegisterFormValues extends RegisterData {
+  confirmPassword?: string;
 }
 
 export interface AuthState {

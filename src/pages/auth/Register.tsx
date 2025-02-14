@@ -15,11 +15,7 @@ import {
 } from '@mui/material';
 import { register } from '../../store/slices/authSlice';
 import { RootState, AppDispatch } from '../../store';
-import { RegisterData } from '../../types/auth';
-
-interface RegisterFormValues extends RegisterData {
-  confirmPassword: string;
-}
+import { RegisterFormValues } from '../../types/auth';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -58,28 +54,19 @@ const Register: React.FC = () => {
   const initialValues: RegisterFormValues = {
     email: '',
     password: '',
-    confirmPassword: '',
     first_name: '',
     last_name: '',
-    phone_number: '',
+    phone_number: ''
   };
 
-  const handleSubmit = async (values: RegisterFormValues, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
+  const handleSubmit = async (values: RegisterFormValues) => {
     try {
       setError(null);
       const { confirmPassword, ...registerData } = values;
-      await dispatch(register({
-        email: registerData.email,
-        password: registerData.password,
-        first_name: registerData.first_name,
-        last_name: registerData.last_name,
-        phone_number: registerData.phone_number
-      })).unwrap();
+      await dispatch(register(registerData)).unwrap();
       navigate('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
-    } finally {
-      setSubmitting(false);
     }
   };
 

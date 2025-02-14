@@ -12,13 +12,7 @@ import {
 } from '@mui/material';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { register } from '../../store/slices/authSlice';
-
-interface RegisterFormValues {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-}
+import { RegisterFormValues } from '../../types/auth';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -27,10 +21,12 @@ const validationSchema = Yup.object({
   password: Yup.string()
     .min(8, 'Password must be at least 8 characters')
     .required('Password is required'),
-  firstName: Yup.string()
+  first_name: Yup.string()
     .required('First name is required'),
-  lastName: Yup.string()
+  last_name: Yup.string()
     .required('Last name is required'),
+  phone_number: Yup.string()
+    .required('Phone number is required'),
 });
 
 const RegisterForm = () => {
@@ -38,13 +34,16 @@ const RegisterForm = () => {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
 
+  const initialValues: RegisterFormValues = {
+    email: '',
+    password: '',
+    first_name: '',
+    last_name: '',
+    phone_number: ''
+  };
+
   const formik = useFormik<RegisterFormValues>({
-    initialValues: {
-      email: '',
-      password: '',
-      firstName: '',
-      lastName: '',
-    },
+    initialValues,
     validationSchema,
     onSubmit: async (values) => {
       try {
@@ -80,27 +79,27 @@ const RegisterForm = () => {
             margin="normal"
             required
             fullWidth
-            id="firstName"
+            id="first_name"
             label="First Name"
-            name="firstName"
+            name="first_name"
             autoComplete="given-name"
-            value={formik.values.firstName}
+            value={formik.values.first_name}
             onChange={formik.handleChange}
-            error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-            helperText={formik.touched.firstName && formik.errors.firstName}
+            error={formik.touched.first_name && Boolean(formik.errors.first_name)}
+            helperText={formik.touched.first_name && formik.errors.first_name}
           />
           <TextField
             margin="normal"
             required
             fullWidth
-            id="lastName"
+            id="last_name"
             label="Last Name"
-            name="lastName"
+            name="last_name"
             autoComplete="family-name"
-            value={formik.values.lastName}
+            value={formik.values.last_name}
             onChange={formik.handleChange}
-            error={formik.touched.lastName && Boolean(formik.errors.lastName)}
-            helperText={formik.touched.lastName && formik.errors.lastName}
+            error={formik.touched.last_name && Boolean(formik.errors.last_name)}
+            helperText={formik.touched.last_name && formik.errors.last_name}
           />
           <TextField
             margin="normal"
@@ -128,6 +127,19 @@ const RegisterForm = () => {
             onChange={formik.handleChange}
             error={formik.touched.password && Boolean(formik.errors.password)}
             helperText={formik.touched.password && formik.errors.password}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="phone_number"
+            label="Phone Number"
+            name="phone_number"
+            autoComplete="tel"
+            value={formik.values.phone_number}
+            onChange={formik.handleChange}
+            error={formik.touched.phone_number && Boolean(formik.errors.phone_number)}
+            helperText={formik.touched.phone_number && formik.errors.phone_number}
           />
           <Button
             type="submit"

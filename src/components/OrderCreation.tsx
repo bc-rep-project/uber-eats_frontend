@@ -25,6 +25,7 @@ import { useAppSelector } from '../hooks/useAppSelector';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { updateUserProfile } from '../store/slices/authSlice';
 import { socket } from '../services/socket';
+import { Address } from '../types/auth';
 
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY || '');
@@ -36,14 +37,6 @@ interface OrderCreationProps {
   tax: number;
   deliveryFee: number;
   serviceFee: number;
-}
-
-interface DeliveryAddress {
-  type: string;
-  address: string;
-  city: string;
-  state: string;
-  zip: string;
 }
 
 interface PaymentMethodOption {
@@ -70,7 +63,7 @@ const CheckoutForm = ({
   const [processing, setProcessing] = useState(false);
   const [orderCreated, setOrderCreated] = useState(false);
   const { user } = useAppSelector((state) => state.auth);
-  const [selectedAddress, setSelectedAddress] = useState<DeliveryAddress | null>(
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(
     user?.saved_addresses[0] || null
   );
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethodOption>({
@@ -138,12 +131,12 @@ const CheckoutForm = ({
   };
 
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newAddress: DeliveryAddress = {
-      type: 'delivery',
+    const newAddress: Address = {
+      type: 'home',
       address: e.target.value,
       city: '',
       state: '',
-      zip: '',
+      zip: ''
     };
     dispatch(updateUserProfile({
       saved_addresses: [...(user?.saved_addresses || []), newAddress]
