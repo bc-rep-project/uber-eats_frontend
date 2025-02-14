@@ -15,6 +15,11 @@ import {
 } from '@mui/material';
 import { register } from '../../store/slices/authSlice';
 import { RootState, AppDispatch } from '../../store';
+import { RegisterData } from '../../types/auth';
+
+interface RegisterFormValues extends Omit<RegisterData, keyof {}> {
+  confirmPassword: string;
+}
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -49,6 +54,15 @@ const Register: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { loading, error } = useSelector((state: RootState) => state.auth);
 
+  const initialValues: RegisterFormValues = {
+    email: '',
+    password: '',
+    confirmPassword: '',
+    first_name: '',
+    last_name: '',
+    phone_number: '',
+  };
+
   return (
     <Container maxWidth="sm">
       <Paper elevation={3} sx={{ p: 4, mt: 8 }}>
@@ -63,16 +77,9 @@ const Register: React.FC = () => {
         )}
 
         <Formik
-          initialValues={{
-            email: '',
-            password: '',
-            confirmPassword: '',
-            first_name: '',
-            last_name: '',
-            phone_number: '',
-          }}
+          initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={async (values, { setSubmitting }) => {
+          onSubmit={async (values: RegisterFormValues, { setSubmitting }) => {
             try {
               const { confirmPassword, ...registerData } = values;
               await dispatch(register(registerData));
