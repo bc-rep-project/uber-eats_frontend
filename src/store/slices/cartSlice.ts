@@ -6,11 +6,11 @@ interface Customization {
 }
 
 interface CartItem {
-  id: number;
+  id: string;
   name: string;
   price: number;
   quantity: number;
-  restaurantId: number;
+  restaurantId: string;
   image?: string;
   customizations?: Customization[];
 }
@@ -18,7 +18,7 @@ interface CartItem {
 interface CartState {
   items: CartItem[];
   total: number;
-  restaurantId: number | null;
+  restaurantId: string | null;
 }
 
 const initialState: CartState = {
@@ -41,14 +41,14 @@ const cartSlice = createSlice({
       }
       state.total = state.items.reduce((sum: number, item: CartItem) => sum + (item.price * item.quantity), 0);
     },
-    removeItem: (state: CartState, action: PayloadAction<number>) => {
+    removeItem: (state: CartState, action: PayloadAction<string>) => {
       state.items = state.items.filter(item => item.id !== action.payload);
       state.total = state.items.reduce((sum: number, item: CartItem) => sum + (item.price * item.quantity), 0);
       if (state.items.length === 0) {
         state.restaurantId = null;
       }
     },
-    updateQuantity: (state: CartState, action: PayloadAction<{ id: number; quantity: number }>) => {
+    updateQuantity: (state: CartState, action: PayloadAction<{ id: string; quantity: number }>) => {
       const item = state.items.find(item => item.id === action.payload.id);
       if (item) {
         item.quantity = action.payload.quantity;

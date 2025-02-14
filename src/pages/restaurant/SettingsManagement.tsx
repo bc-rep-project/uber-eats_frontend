@@ -54,7 +54,7 @@ interface DeliveryZone {
 interface TaxRule {
   id: string;
   name: string;
-  description?: string;
+  description: string;
   rate: number;
   isActive: boolean;
   appliesToDelivery: boolean;
@@ -62,10 +62,12 @@ interface TaxRule {
   minimumOrderAmount: number;
 }
 
+type TaxRuleInput = Omit<TaxRule, 'id'>;
+
 interface TaxRuleDialogProps {
   open: boolean;
   onClose: () => void;
-  onSave: (rule: Omit<TaxRule, 'id'>) => void;
+  onSave: (rule: TaxRuleInput) => void;
   initialData?: TaxRule;
 }
 
@@ -75,7 +77,7 @@ const TaxRuleDialog: React.FC<TaxRuleDialogProps> = ({
   onSave,
   initialData,
 }) => {
-  const [formData, setFormData] = useState<Omit<TaxRule, 'id'>>({
+  const [formData, setFormData] = useState<TaxRuleInput>({
     name: initialData?.name || '',
     description: initialData?.description || '',
     rate: initialData?.rate || 0,
@@ -92,47 +94,51 @@ const TaxRuleDialog: React.FC<TaxRuleDialogProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>{initialData ? 'Edit Tax Rule' : 'Add Tax Rule'}</DialogTitle>
       <form onSubmit={handleSubmit}>
+        <DialogTitle>{initialData ? 'Edit Tax Rule' : 'Add Tax Rule'}</DialogTitle>
         <DialogContent>
-          <Grid container spacing={2}>
+          <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid item xs={12}>
               <TextField
+                fullWidth
                 label="Name"
+                name="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
-                fullWidth
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
+                fullWidth
                 label="Description"
+                name="description"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                fullWidth
                 multiline
                 rows={2}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Tax Rate (%)"
+                fullWidth
+                label="Rate (%)"
+                name="rate"
                 type="number"
                 value={formData.rate}
                 onChange={(e) => setFormData({ ...formData, rate: parseFloat(e.target.value) })}
                 required
-                fullWidth
-                inputProps={{ min: 0, max: 100, step: 0.01 }}
+                inputProps={{ min: 0, step: 0.01 }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
+                fullWidth
                 label="Minimum Order Amount"
+                name="minimumOrderAmount"
                 type="number"
                 value={formData.minimumOrderAmount}
                 onChange={(e) => setFormData({ ...formData, minimumOrderAmount: parseFloat(e.target.value) })}
-                fullWidth
                 inputProps={{ min: 0, step: 0.01 }}
               />
             </Grid>
@@ -286,15 +292,28 @@ const SettingsManagement: React.FC = () => {
     }
   };
 
-  const handleSaveTaxRule = async (rule: Omit<TaxRule, 'id'>) => {
+  const handleSaveTaxRule = async (ruleInput: TaxRuleInput) => {
     try {
-      await fetch('/api/restaurant/settings/tax-rules', {
-        method: 'PUT',
+      const response = await fetch('/api/restaurant/settings/tax-rules', {
+        method: selectedTax?.id ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(rule),
+        body: JSON.stringify(selectedTax?.id ? { ...ruleInput, id: selectedTax.id } : ruleInput),
       });
-      setTaxRules(taxRules.map((r) => (r.id === selectedTax?.id ? rule : r)));
+      
+      if (!response.ok) {
+        throw new Error('Failed to save tax rule');
+      }
+      
+      const savedRule: TaxRule = await response.json();
+      
+      if (selectedTax?.id) {
+        setTaxRules(taxRules.map((r) => (r.id === selectedTax.id ? savedRule : r)));
+      } else {
+        setTaxRules([...taxRules, savedRule]);
+      }
+      
       setOpenTaxDialog(false);
+      setSelectedTax(null);
       setError(null);
     } catch (err) {
       setError('Failed to save tax rule');
@@ -750,7 +769,7 @@ const SettingsManagement: React.FC = () => {
         open={openTaxDialog}
         onClose={() => setOpenTaxDialog(false)}
         onSave={handleSaveTaxRule}
-        initialData={selectedTax}
+        initialData={selectedTax || undefined}
       />
     </Box>
   );

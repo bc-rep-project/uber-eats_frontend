@@ -37,13 +37,13 @@ const Cart: React.FC = () => {
   const deliveryFee = 2.99;
   const serviceFee = subtotal * 0.05; // 5% service fee
   const tax = subtotal * 0.08; // 8% tax
-  const total = subtotal + deliveryFee + serviceFee + tax + tip;
+  const orderTotal = subtotal + deliveryFee + serviceFee + tax + tip;
 
-  const handleQuantityChange = (itemId: number, quantity: number) => {
+  const handleQuantityChange = (itemId: string, quantity: number) => {
     dispatch(updateQuantity({ id: itemId, quantity }));
   };
 
-  const handleRemoveItem = (itemId: number) => {
+  const handleRemoveItem = (itemId: string) => {
     dispatch(removeItem(itemId));
   };
 
@@ -248,7 +248,7 @@ const Cart: React.FC = () => {
                   }}
                 >
                   <Typography variant="h6">Total</Typography>
-                  <Typography variant="h6">${total.toFixed(2)}</Typography>
+                  <Typography variant="h6">${orderTotal.toFixed(2)}</Typography>
                 </Box>
                 <Button
                   variant="contained"
