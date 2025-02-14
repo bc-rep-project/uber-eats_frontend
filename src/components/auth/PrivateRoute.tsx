@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
+import { AuthState } from '../../types/auth';
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -10,7 +11,7 @@ interface PrivateRouteProps {
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, roles }) => {
   const location = useLocation();
-  const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { user, isAuthenticated } = useSelector((state: RootState) => state.auth as AuthState);
 
   if (!isAuthenticated) {
     // Redirect to login page with return url

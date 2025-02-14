@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction, ActionReducerMapBuilder } from '@reduxjs/toolkit';
-import { User, Address, PaymentMethod, LoginCredentials, RegisterData, AuthState, AuthResponse } from '../../types/auth';
+import { User, LoginCredentials, RegisterData, AuthState, AuthResponse } from '../../types/auth';
 
 const initialState: AuthState = {
   user: null,

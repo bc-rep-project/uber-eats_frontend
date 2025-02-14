@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Chip, Typography, IconButton, Stack, Divider } from '@mui/material';
+import { Box, Chip, Stack, Divider } from '@mui/material';
 import FastfoodIcon from '@mui/icons-material/Fastfood';
 import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
