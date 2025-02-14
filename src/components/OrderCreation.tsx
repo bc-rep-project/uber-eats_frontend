@@ -38,6 +38,21 @@ interface OrderCreationProps {
   serviceFee: number;
 }
 
+interface DeliveryAddress {
+  type: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+}
+
+interface PaymentMethodOption {
+  type: 'credit_card' | 'cash';
+  last4?: string;
+  exp_month?: number;
+  exp_year?: number;
+}
+
 const CheckoutForm = ({
   restaurantId,
   cartItems,
@@ -55,11 +70,18 @@ const CheckoutForm = ({
   const [processing, setProcessing] = useState(false);
   const [orderCreated, setOrderCreated] = useState(false);
   const { user } = useAppSelector((state) => state.auth);
+  const [selectedAddress, setSelectedAddress] = useState<DeliveryAddress | null>(
+    user?.saved_addresses[0] || null
+  );
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethodOption>({
+    type: 'credit_card'
+  });
+  const [specialInstructions, setSpecialInstructions] = useState('');
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!stripe || !elements || !user) {
+    if (!stripe || !elements || !user || !selectedAddress) {
       return;
     }
 
@@ -89,6 +111,9 @@ const CheckoutForm = ({
         restaurantId,
         userId: user._id,
         paymentMethodId: paymentMethod.id,
+        deliveryAddress: `${selectedAddress.address}, ${selectedAddress.city}, ${selectedAddress.state} ${selectedAddress.zip}`,
+        paymentMethod: selectedPaymentMethod.type,
+        specialInstructions,
       };
 
       // TODO: Replace with actual API call
@@ -108,15 +133,26 @@ const CheckoutForm = ({
   };
 
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(updateUserProfile({ address: e.target.value }));
+    const newAddress: DeliveryAddress = {
+      type: 'delivery',
+      address: e.target.value,
+      city: '',
+      state: '',
+      zip: '',
+    };
+    dispatch(updateUserProfile({
+      saved_addresses: [...(user?.saved_addresses || []), newAddress]
+    }));
+    setSelectedAddress(newAddress);
   };
 
   const handlePaymentMethodChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(updateUserProfile({ paymentMethod: e.target.value as 'credit_card' | 'cash' }));
+    const type = e.target.value as 'credit_card' | 'cash';
+    setSelectedPaymentMethod({ type });
   };
 
   const handleSpecialInstructionsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(updateUserProfile({ specialInstructions: e.target.value }));
+    setSpecialInstructions(e.target.value);
   };
 
   return (
@@ -128,7 +164,7 @@ const CheckoutForm = ({
             fullWidth
             required
             label="Delivery Address"
-            value={user?.address || ''}
+            value={selectedAddress?.address || ''}
             onChange={handleAddressChange}
           />
         </Grid>
@@ -136,7 +172,7 @@ const CheckoutForm = ({
         <Grid item xs={12}>
           <Typography variant="h6">Payment Method</Typography>
           <RadioGroup
-            value={user?.paymentMethod || 'credit_card'}
+            value={selectedPaymentMethod.type}
             onChange={handlePaymentMethodChange}
           >
             <FormControlLabel
@@ -152,7 +188,7 @@ const CheckoutForm = ({
           </RadioGroup>
         </Grid>
 
-        {user?.paymentMethod === 'credit_card' && (
+        {selectedPaymentMethod.type === 'credit_card' && (
           <Grid item xs={12}>
             <CardElement
               options={{
@@ -180,7 +216,7 @@ const CheckoutForm = ({
             multiline
             rows={3}
             label="Special Instructions"
-            value={user?.specialInstructions || ''}
+            value={specialInstructions}
             onChange={handleSpecialInstructionsChange}
           />
         </Grid>
