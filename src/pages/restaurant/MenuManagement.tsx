@@ -133,7 +133,8 @@ const MenuManagement: React.FC = () => {
         setItems(data);
         
         // Extract unique categories
-        const uniqueCategories = [...new Set(data.map((item: MenuItemType) => item.category))];
+        const menuCategories = data.map((item: MenuItemType) => item.category);
+        const uniqueCategories: string[] = Array.from(new Set(menuCategories));
         setCategories(uniqueCategories);
         
         setError(null);
