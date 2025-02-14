@@ -87,7 +87,7 @@ const CheckoutForm = ({
         items: cartItems,
         total: subtotal + tax + deliveryFee + serviceFee,
         restaurantId,
-        userId: user.id,
+        userId: user._id,
         paymentMethodId: paymentMethod.id,
       };
 
