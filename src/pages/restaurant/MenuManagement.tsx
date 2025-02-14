@@ -31,6 +31,18 @@ import {
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
+interface CustomizationOption {
+  name: string;
+  price: number;
+}
+
+interface Customization {
+  name: string;
+  required: boolean;
+  multiple_select: boolean;
+  options: CustomizationOption[];
+}
+
 interface MenuItemType {
   id: string;
   name: string;
@@ -40,15 +52,18 @@ interface MenuItemType {
   image_url?: string;
   is_available: boolean;
   preparation_time: number;
-  customizations: Array<{
-    name: string;
-    required: boolean;
-    multiple_select: boolean;
-    options: Array<{
-      name: string;
-      price: number;
-    }>;
-  }>;
+  customizations: Customization[];
+}
+
+interface FormValues {
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  image_url: string;
+  is_available: boolean;
+  preparation_time: number;
+  customizations: Customization[];
 }
 
 const validationSchema = Yup.object({
@@ -71,7 +86,7 @@ const MenuManagement: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<MenuItemType | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
 
-  const formik = useFormik({
+  const formik = useFormik<FormValues>({
     initialValues: {
       name: '',
       description: '',
