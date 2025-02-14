@@ -8,9 +8,6 @@ import {
   Box,
   TextField,
   Button,
-  Divider,
-  Switch,
-  FormControlLabel,
   List,
   ListItem,
   ListItemText,
@@ -25,7 +22,6 @@ import {
 import {
   Edit as EditIcon,
   Delete as DeleteIcon,
-  Add as AddIcon,
 } from '@mui/icons-material';
 import { RootState } from '../../store';
 import { updateUserProfile } from '../../store/slices/authSlice';
@@ -81,7 +77,13 @@ const Profile: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await dispatch(updateUserProfile(formData));
+      const updateData: Partial<User> = {
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        email: formData.email,
+        phone_number: formData.phone_number,
+      };
+      await dispatch(updateUserProfile(updateData));
       setIsEditing(false);
       setError(null);
     } catch (err) {
@@ -223,8 +225,8 @@ const Profile: React.FC = () => {
                     {user?.payment_methods.map((payment, index) => (
                       <ListItem key={index}>
                         <ListItemText
-                          primary={payment.type}
-                          secondary={payment.last4 ? `**** **** **** ${payment.last4}` : 'No card details'}
+                          primary={payment.method}
+                          secondary={payment.details}
                         />
                       </ListItem>
                     ))}
