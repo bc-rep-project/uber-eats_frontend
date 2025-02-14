@@ -74,12 +74,7 @@ const Register: React.FC = () => {
           validationSchema={validationSchema}
           onSubmit={async (values, { setSubmitting }) => {
             try {
-              const { confirmPassword, first_name, last_name, ...rest } = values;
-              const registerData = {
-                ...rest,
-                firstName: first_name,
-                lastName: last_name,
-              };
+              const { confirmPassword, ...registerData } = values;
               await dispatch(register(registerData));
               navigate('/');
             } catch (error) {
