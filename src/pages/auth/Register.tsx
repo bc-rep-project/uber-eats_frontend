@@ -82,7 +82,13 @@ const Register: React.FC = () => {
           onSubmit={async (values: RegisterFormValues, { setSubmitting }) => {
             try {
               const { confirmPassword, ...registerData } = values;
-              await dispatch(register(registerData));
+              await dispatch(register({
+                email: registerData.email,
+                password: registerData.password,
+                first_name: registerData.first_name,
+                last_name: registerData.last_name,
+                phone_number: registerData.phone_number
+              })).unwrap();
               navigate('/');
             } catch (error) {
               // Error is handled by the auth slice
