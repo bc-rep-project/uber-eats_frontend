@@ -126,8 +126,8 @@ const OrderManagement: React.FC = () => {
     }
   };
 
-  const getStatusColor = (status: Order['status']) => {
-    const colors: Record<Order['status'], string> = {
+  const getStatusColor = (status: Order['status']): 'warning' | 'info' | 'success' | 'error' => {
+    const colors: Record<Order['status'], 'warning' | 'info' | 'success' | 'error'> = {
       pending: 'warning',
       confirmed: 'info',
       preparing: 'info',
