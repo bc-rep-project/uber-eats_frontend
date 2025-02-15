@@ -149,12 +149,17 @@ function App() {
   };
 
   const handleFavoriteClick = (restaurantId: string) => {
-    // Handle favorite toggle
-    console.log('Toggle favorite for restaurant:', restaurantId);
+    // Toggle restaurant favorite status
+    const restaurant = mockRestaurants.find(r => r.id === restaurantId);
+    if (restaurant) {
+      restaurant.isLiked = !restaurant.isLiked;
+      // Force re-render
+      setCartItemCount(prev => prev);
+    }
   };
 
   const handleRestaurantClick = (restaurantId: string) => {
-    // Handle restaurant click
+    // Navigate to restaurant detail page
     console.log('Navigate to restaurant:', restaurantId);
   };
 
@@ -169,8 +174,13 @@ function App() {
   };
 
   const handleNotificationClick = () => {
-    // Handle notification click
-    console.log('Open notifications');
+    // Increment notification count for demo purposes
+    setNotificationCount(prev => prev + 1);
+  };
+
+  const handleAddToCart = () => {
+    // Increment cart count
+    setCartItemCount(prev => prev + 1);
   };
 
   return (
@@ -200,14 +210,22 @@ function App() {
                       onSortSelect={(sortId) => console.log('Sort:', sortId)}
                     />
                     <RestaurantGrid>
-                      {mockRestaurants.map((restaurant) => (
-                        <RestaurantCard
-                          key={restaurant.id}
-                          restaurant={restaurant}
-                          onFavoriteClick={handleFavoriteClick}
-                          onClick={handleRestaurantClick}
-                        />
-                      ))}
+                      {mockRestaurants
+                        .filter(restaurant => 
+                          !selectedCategory || 
+                          restaurant.cuisineType.some(type => 
+                            type.toLowerCase().includes(selectedCategory.toLowerCase())
+                          )
+                        )
+                        .map((restaurant) => (
+                          <RestaurantCard
+                            key={restaurant.id}
+                            restaurant={restaurant}
+                            onFavoriteClick={handleFavoriteClick}
+                            onClick={handleRestaurantClick}
+                          />
+                        ))
+                      }
                     </RestaurantGrid>
                   </>
                 }

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Box, Chip, IconButton, Typography, useTheme } from '@mui/material';
+import { Box, Chip } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { Category, FilterOption, SortOption } from '../../types/restaurant';
+import { Category } from '../../types/restaurant';
 import FastfoodIcon from '@mui/icons-material/Fastfood';
 import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
@@ -79,8 +79,6 @@ const CategoryNav: React.FC<CategoryNavProps> = ({
   onFilterSelect,
   onSortSelect,
 }) => {
-  const theme = useTheme();
-
   return (
     <Box>
       <ScrollContainer>
