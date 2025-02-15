@@ -178,11 +178,6 @@ function App() {
     setNotificationCount(prev => prev + 1);
   };
 
-  const handleAddToCart = () => {
-    // Increment cart count
-    setCartItemCount(prev => prev + 1);
-  };
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
