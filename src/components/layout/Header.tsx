@@ -1,20 +1,18 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, InputBase, Badge, IconButton, Box } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Badge, Box, Typography, InputBase } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import SearchIcon from '@mui/icons-material/Search';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import SearchIcon from '@mui/icons-material/Search';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { DeliveryAddress } from '../../types/restaurant';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: '#f8f8f8',
-  marginLeft: 0,
+  backgroundColor: theme.palette.grey[100],
+  marginTop: theme.spacing(1),
   width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(1),
-    width: 'auto',
-  },
+  padding: theme.spacing(1),
 }));
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
@@ -25,7 +23,7 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  color: '#666',
+  color: theme.palette.text.secondary,
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
@@ -38,41 +36,64 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  currentAddress: DeliveryAddress;
+  notificationCount: number;
+  onAddressClick: () => void;
+  onNotificationClick: () => void;
+  onSearch: (query: string) => void;
+}
+
+const Header: React.FC<HeaderProps> = ({
+  currentAddress,
+  notificationCount,
+  onAddressClick,
+  onNotificationClick,
+  onSearch,
+}) => {
   return (
-    <AppBar position="fixed" color="inherit" elevation={0} sx={{ borderBottom: '1px solid #eee' }}>
-      <Toolbar>
-        <Box sx={{ flexGrow: 1 }}>
-          <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-            Deliver now
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
-              1226 University Dr
+    <AppBar position="sticky" color="inherit" elevation={0}>
+      <Toolbar sx={{ flexDirection: 'column', p: 2 }}>
+        <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box 
+            onClick={onAddressClick}
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              cursor: 'pointer'
+            }}
+          >
+            <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>
+              Deliver now
             </Typography>
-            <IconButton size="small">
-              <KeyboardArrowDownIcon />
-            </IconButton>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="body1" color="text.secondary" sx={{ ml: 1 }}>
+                {currentAddress.address}
+              </Typography>
+              <KeyboardArrowDownIcon color="action" />
+            </Box>
           </Box>
-        </Box>
-
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search Uber Eats"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
-
-          <IconButton size="large" color="inherit">
-            <Badge badgeContent={1} color="success">
+          <IconButton 
+            size="large" 
+            onClick={onNotificationClick}
+            sx={{ ml: 2 }}
+          >
+            <Badge badgeContent={notificationCount} color="primary">
               <NotificationsIcon />
             </Badge>
           </IconButton>
         </Box>
+        
+        <Search>
+          <SearchIconWrapper>
+            <SearchIcon />
+          </SearchIconWrapper>
+          <StyledInputBase
+            placeholder="Search Uber Eats"
+            inputProps={{ 'aria-label': 'search' }}
+            onChange={(e) => onSearch(e.target.value)}
+          />
+        </Search>
       </Toolbar>
     </AppBar>
   );

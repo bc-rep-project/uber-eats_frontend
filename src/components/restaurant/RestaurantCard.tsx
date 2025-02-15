@@ -5,102 +5,118 @@ import {
   CardContent,
   Typography,
   Box,
-  Chip,
   IconButton,
-  Rating,
+  Chip,
 } from '@mui/material';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { styled } from '@mui/material/styles';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import { Restaurant } from '../../types/restaurant';
+
+const StyledCard = styled(Card)(({ theme }) => ({
+  position: 'relative',
+  cursor: 'pointer',
+  '&:hover': {
+    transform: 'translateY(-4px)',
+    transition: 'transform 0.2s ease-in-out',
+  },
+}));
+
+const FavoriteButton = styled(IconButton)(({ theme }) => ({
+  position: 'absolute',
+  top: theme.spacing(1),
+  right: theme.spacing(1),
+  backgroundColor: 'white',
+  '&:hover': {
+    backgroundColor: 'white',
+  },
+}));
+
+const OfferChip = styled(Chip)(({ theme }) => ({
+  position: 'absolute',
+  top: theme.spacing(1),
+  left: theme.spacing(1),
+  backgroundColor: theme.palette.success.main,
+  color: 'white',
+}));
 
 interface RestaurantCardProps {
-  name: string;
-  image: string;
-  rating: number;
-  deliveryFee: number;
-  deliveryTime: string;
-  hasOffers?: boolean;
-  isFavorite?: boolean;
-  onFavoriteClick?: () => void;
+  restaurant: Restaurant;
+  onFavoriteClick: (restaurantId: string) => void;
+  onClick: (restaurantId: string) => void;
 }
 
 const RestaurantCard: React.FC<RestaurantCardProps> = ({
-  name,
-  image,
-  rating,
-  deliveryFee,
-  deliveryTime,
-  hasOffers = false,
-  isFavorite = false,
+  restaurant,
   onFavoriteClick,
+  onClick,
 }) => {
+  const {
+    id,
+    name,
+    imageUrl,
+    rating,
+    deliveryTime,
+    deliveryFee,
+    isLiked,
+    offers,
+  } = restaurant;
+
   return (
-    <Card sx={{ position: 'relative', mb: 2 }}>
+    <StyledCard onClick={() => onClick(id)}>
       <Box sx={{ position: 'relative' }}>
         <CardMedia
           component="img"
-          height="160"
-          image={image}
+          height="200"
+          image={imageUrl}
           alt={name}
-          sx={{ objectFit: 'cover' }}
         />
-        <IconButton
-          sx={{
-            position: 'absolute',
-            top: 8,
-            right: 8,
-            backgroundColor: 'white',
-            '&:hover': { backgroundColor: 'white' },
+        <FavoriteButton
+          onClick={(e) => {
+            e.stopPropagation();
+            onFavoriteClick(id);
           }}
-          onClick={onFavoriteClick}
+          size="small"
         >
-          {isFavorite ? (
+          {isLiked ? (
             <FavoriteIcon color="error" />
           ) : (
             <FavoriteBorderIcon />
           )}
-        </IconButton>
-        {hasOffers && (
-          <Chip
-            icon={<LocalOfferIcon />}
-            label="Offers available"
+        </FavoriteButton>
+        {offers && offers.length > 0 && (
+          <OfferChip
+            label={offers[0].text}
             size="small"
-            color="success"
-            sx={{
-              position: 'absolute',
-              bottom: 8,
-              left: 8,
-              backgroundColor: '#00a082',
-              color: 'white',
-            }}
           />
         )}
       </Box>
-
       <CardContent>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <Box>
-            <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
-              {name}
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
-              <Rating value={rating} precision={0.1} size="small" readOnly />
-              <Typography variant="body2" color="text.secondary">
-                {rating}
-              </Typography>
-            </Box>
-            <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <AccessTimeIcon fontSize="small" />
-              {deliveryTime}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+          <Typography variant="h6" component="div">
+            {name}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {rating}★
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <AccessTimeIcon fontSize="small" color="action" />
+            <Typography variant="body2" color="text.secondary" sx={{ ml: 0.5 }}>
+              {deliveryTime.min}-{deliveryTime.max} min
             </Typography>
           </Box>
+          <Typography variant="body2" color="text.secondary">
+            •
+          </Typography>
           <Typography variant="body2" color="text.secondary">
             ${deliveryFee.toFixed(2)} Delivery Fee
           </Typography>
         </Box>
       </CardContent>
-    </Card>
+    </StyledCard>
   );
 };
 

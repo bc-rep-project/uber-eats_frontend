@@ -3,107 +3,84 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#00A082', // UberEats green
-      light: '#33B39E',
-      dark: '#007057',
-      contrastText: '#fff',
+      main: '#000000', // UberEats uses black as primary color
+      light: '#333333',
+      dark: '#000000',
+      contrastText: '#ffffff',
     },
     secondary: {
-      main: '#276EF1', // Blue
-      light: '#527AF3',
-      dark: '#1B4DA8',
-      contrastText: '#fff',
-    },
-    error: {
-      main: '#E11900', // Red
-      light: '#E74C3C',
-      dark: '#B71C1C',
-    },
-    warning: {
-      main: '#FFC043', // Yellow
-      light: '#FFD369',
-      dark: '#F5A623',
+      main: '#06C167', // UberEats green
+      light: '#39D98A',
+      dark: '#048848',
+      contrastText: '#ffffff',
     },
     success: {
-      main: '#05944F', // Green
-      light: '#37A96E',
-      dark: '#036B38',
+      main: '#06C167',
+      light: '#39D98A',
+      dark: '#048848',
+    },
+    error: {
+      main: '#FF3346',
+      light: '#FF6674',
+      dark: '#CC0017',
     },
     background: {
       default: '#FFFFFF',
-      paper: '#F6F6F6',
+      paper: '#FFFFFF',
     },
+    text: {
+      primary: '#000000',
+      secondary: '#545454',
+    },
+    divider: '#E8E8E8',
   },
   typography: {
-    fontFamily: '"UberMove", "Helvetica Neue", Arial, sans-serif',
-    h1: {
-      fontSize: '2.5rem',
-      fontWeight: 700,
-    },
-    h2: {
-      fontSize: '2rem',
-      fontWeight: 600,
-    },
-    h3: {
-      fontSize: '1.75rem',
-      fontWeight: 600,
-    },
-    h4: {
-      fontSize: '1.5rem',
-      fontWeight: 600,
-    },
-    h5: {
-      fontSize: '1.25rem',
-      fontWeight: 600,
-    },
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+    ].join(','),
     h6: {
-      fontSize: '1rem',
-      fontWeight: 600,
+      fontWeight: 500,
+      fontSize: '1.1rem',
     },
     subtitle1: {
-      fontSize: '1rem',
-      fontWeight: 400,
-    },
-    subtitle2: {
-      fontSize: '0.875rem',
-      fontWeight: 500,
+      fontWeight: 600,
     },
     body1: {
-      fontSize: '1rem',
-      fontWeight: 400,
+      fontSize: '0.95rem',
     },
     body2: {
       fontSize: '0.875rem',
-      fontWeight: 400,
-    },
-    button: {
-      textTransform: 'none',
-      fontWeight: 500,
     },
   },
   shape: {
     borderRadius: 8,
   },
   components: {
-    MuiButton: {
+    MuiAppBar: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
-          padding: '8px 24px',
-          fontSize: '1rem',
-        },
-        containedPrimary: {
-          '&:hover': {
-            backgroundColor: '#007057',
-          },
+          backgroundColor: '#FFFFFF',
+          color: '#000000',
         },
       },
     },
-    MuiTextField: {
+    MuiButton: {
       styleOverrides: {
         root: {
-          '& .MuiOutlinedInput-root': {
-            borderRadius: 8,
+          textTransform: 'none',
+          borderRadius: '8px',
+          fontWeight: 500,
+        },
+        contained: {
+          boxShadow: 'none',
+          '&:hover': {
+            boxShadow: 'none',
           },
         },
       },
@@ -111,8 +88,58 @@ const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 12,
-          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+          borderRadius: '12px',
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          height: '32px',
+          borderRadius: '16px',
+        },
+        outlined: {
+          borderColor: '#E8E8E8',
+          '&:hover': {
+            backgroundColor: '#F6F6F6',
+          },
+        },
+      },
+    },
+    MuiBottomNavigation: {
+      styleOverrides: {
+        root: {
+          height: '56px',
+          backgroundColor: '#FFFFFF',
+        },
+      },
+    },
+    MuiBottomNavigationAction: {
+      styleOverrides: {
+        root: {
+          padding: '6px 0',
+          minWidth: 'auto',
+          '&.Mui-selected': {
+            paddingTop: '6px',
+          },
+        },
+        label: {
+          fontSize: '0.75rem',
+          '&.Mui-selected': {
+            fontSize: '0.75rem',
+          },
+        },
+      },
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#F6F6F6',
+          borderRadius: '8px',
+          '&:hover': {
+            backgroundColor: '#EFEFEF',
+          },
         },
       },
     },
