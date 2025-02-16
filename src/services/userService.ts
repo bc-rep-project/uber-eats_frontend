@@ -1,4 +1,4 @@
-import { api } from './api';
+import api from './api';
 import { User, UserPreferences, UserStats } from '../types/user';
 import { Address, DeliveryLocation } from '../types/address';
 import { PaymentMethod } from '../types/payment';
