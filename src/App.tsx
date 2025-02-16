@@ -1,8 +1,9 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { Box, CssBaseline, ThemeProvider } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import theme from './theme';
+import { useState, useCallback } from 'react';
 
 // Components
 import Header from './components/layout/Header';
@@ -140,48 +141,127 @@ const currentAddress: DeliveryAddress = {
 };
 
 function App() {
-  const [selectedCategory, setSelectedCategory] = React.useState<string | null>(null);
-  const [cartItemCount, setCartItemCount] = React.useState(2);
-  const [notificationCount, setNotificationCount] = React.useState(1);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [cartItemCount, setCartItemCount] = useState(2);
+  const [notificationCount, setNotificationCount] = useState(1);
+  const [activeFilters, setActiveFilters] = useState({
+    rating: 0,
+    priceRange: [] as string[],
+    dietary: [] as string[],
+    sortBy: ''
+  });
+  const navigate = useNavigate();
 
   const handleCategorySelect = (categoryId: string) => {
-    setSelectedCategory(categoryId);
+    setSelectedCategory(prevCategory => prevCategory === categoryId ? null : categoryId);
   };
 
   const handleFavoriteClick = (restaurantId: string) => {
-    // Toggle restaurant favorite status
-    const restaurant = mockRestaurants.find(r => r.id === restaurantId);
-    if (restaurant) {
-      restaurant.isLiked = !restaurant.isLiked;
-      // Force re-render
-      setCartItemCount(prev => prev);
+    const updatedRestaurants = mockRestaurants.map(restaurant => {
+      if (restaurant.id === restaurantId) {
+        return { ...restaurant, isLiked: !restaurant.isLiked };
+      }
+      return restaurant;
+    });
+    // Force re-render with updated restaurants
+    setCartItemCount(prev => prev);
+  };
+
+  const handleRestaurantClick = useCallback((restaurantId: string) => {
+    navigate(`/restaurant/${restaurantId}`);
+  }, [navigate]);
+
+  const handleSearch = (query: string) => {
+    if (query) {
+      navigate(`/search?q=${encodeURIComponent(query)}`);
     }
   };
 
-  const handleRestaurantClick = (restaurantId: string) => {
-    // Navigate to restaurant detail page
-    console.log('Navigate to restaurant:', restaurantId);
-  };
-
-  const handleSearch = (query: string) => {
-    // Handle search
-    console.log('Search query:', query);
-  };
-
   const handleAddressClick = () => {
-    // Handle address click
-    console.log('Open address selection');
+    navigate('/addresses');
   };
 
   const handleNotificationClick = () => {
-    // Increment notification count for demo purposes
-    setNotificationCount(prev => prev + 1);
+    navigate('/notifications');
   };
 
+  const handleFilterSelect = (filterId: string) => {
+    switch (filterId) {
+      case 'rating':
+        setActiveFilters(prev => ({
+          ...prev,
+          rating: prev.rating === 0 ? 4 : prev.rating + 0.5 > 5 ? 0 : prev.rating + 0.5
+        }));
+        break;
+      case 'price':
+        // Toggle through price ranges
+        const priceRanges = ['$', '$$', '$$$', '$$$$'];
+        setActiveFilters(prev => {
+          const currentPriceRange = prev.priceRange[0] || '';
+          const nextIndex = (priceRanges.indexOf(currentPriceRange) + 1) % priceRanges.length;
+          return {
+            ...prev,
+            priceRange: [priceRanges[nextIndex]]
+          };
+        });
+        break;
+      case 'dietary':
+        // Toggle dietary preferences
+        const dietaryOptions = ['vegetarian', 'vegan', 'gluten-free'];
+        setActiveFilters(prev => ({
+          ...prev,
+          dietary: prev.dietary.length === dietaryOptions.length ? [] : dietaryOptions
+        }));
+        break;
+    }
+  };
+
+  const handleSortSelect = (sortId: string) => {
+    setActiveFilters(prev => ({
+      ...prev,
+      sortBy: prev.sortBy === sortId ? '' : sortId
+    }));
+  };
+
+  const filteredRestaurants = mockRestaurants
+    .filter(restaurant => {
+      // Category filter
+      if (selectedCategory && !restaurant.cuisineType.some(type => 
+        type.toLowerCase().includes(selectedCategory.toLowerCase())
+      )) {
+        return false;
+      }
+      
+      // Rating filter
+      if (activeFilters.rating > 0 && restaurant.rating < activeFilters.rating) {
+        return false;
+      }
+
+      // Price range filter
+      if (activeFilters.priceRange.length > 0 && 
+          !activeFilters.priceRange.includes(restaurant.priceRange)) {
+        return false;
+      }
+
+      return true;
+    })
+    .sort((a, b) => {
+      switch (activeFilters.sortBy) {
+        case 'rating':
+          return b.rating - a.rating;
+        case 'price-low':
+          return a.priceRange.length - b.priceRange.length;
+        case 'price-high':
+          return b.priceRange.length - a.priceRange.length;
+        default:
+          return 0;
+      }
+    });
+
   return (
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Router>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
         <Box sx={{ minHeight: '100vh' }}>
           <Header
             currentAddress={currentAddress}
@@ -192,7 +272,7 @@ function App() {
           />
           
           <MainContainer>
-          <Routes>
+            <Routes>
               <Route
                 path="/"
                 element={
@@ -201,35 +281,31 @@ function App() {
                       categories={categories}
                       selectedCategory={selectedCategory}
                       onCategorySelect={handleCategorySelect}
-                      onFilterSelect={(filterId) => console.log('Filter:', filterId)}
-                      onSortSelect={(sortId) => console.log('Sort:', sortId)}
+                      onFilterSelect={handleFilterSelect}
+                      onSortSelect={handleSortSelect}
                     />
                     <RestaurantGrid>
-                      {mockRestaurants
-                        .filter(restaurant => 
-                          !selectedCategory || 
-                          restaurant.cuisineType.some(type => 
-                            type.toLowerCase().includes(selectedCategory.toLowerCase())
-                          )
-                        )
-                        .map((restaurant) => (
-                          <RestaurantCard
-                            key={restaurant.id}
-                            restaurant={restaurant}
-                            onFavoriteClick={handleFavoriteClick}
-                            onClick={handleRestaurantClick}
-                          />
-                        ))
-                      }
+                      {filteredRestaurants.map((restaurant) => (
+                        <RestaurantCard
+                          key={restaurant.id}
+                          restaurant={restaurant}
+                          onFavoriteClick={handleFavoriteClick}
+                          onClick={handleRestaurantClick}
+                        />
+                      ))}
                     </RestaurantGrid>
                   </>
                 }
               />
+              <Route path="/restaurant/:id" element={<Box>Restaurant Detail Page</Box>} />
+              <Route path="/search" element={<Box>Search Results Page</Box>} />
+              <Route path="/addresses" element={<Box>Address Selection Page</Box>} />
+              <Route path="/notifications" element={<Box>Notifications Page</Box>} />
               <Route path="/grocery" element={<Box>Grocery Page</Box>} />
               <Route path="/browse" element={<Box>Browse Page</Box>} />
               <Route path="/cart" element={<Box>Cart Page</Box>} />
               <Route path="/account" element={<Box>Account Page</Box>} />
-          </Routes>
+            </Routes>
           </MainContainer>
 
           <BottomNav
@@ -237,8 +313,8 @@ function App() {
             notificationCount={notificationCount}
           />
         </Box>
-        </Router>
-      </ThemeProvider>
+      </Router>
+    </ThemeProvider>
   );
 }
 
