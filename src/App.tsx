@@ -140,7 +140,7 @@ const currentAddress: DeliveryAddress = {
   isDefault: true,
 };
 
-function App() {
+function AppContent() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [cartItemCount, setCartItemCount] = useState(2);
   const [notificationCount] = useState(1);
@@ -257,60 +257,66 @@ function App() {
     });
 
   return (
+    <Box sx={{ minHeight: '100vh' }}>
+      <Header
+        currentAddress={currentAddress}
+        notificationCount={notificationCount}
+        onAddressClick={handleAddressClick}
+        onNotificationClick={handleNotificationClick}
+        onSearch={handleSearch}
+      />
+      
+      <MainContainer>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <CategoryNav
+                  categories={categories}
+                  selectedCategory={selectedCategory}
+                  onCategorySelect={handleCategorySelect}
+                  onFilterSelect={handleFilterSelect}
+                  onSortSelect={handleSortSelect}
+                />
+                <RestaurantGrid>
+                  {filteredRestaurants.map((restaurant) => (
+                    <RestaurantCard
+                      key={restaurant.id}
+                      restaurant={restaurant}
+                      onFavoriteClick={handleFavoriteClick}
+                      onClick={handleRestaurantClick}
+                    />
+                  ))}
+                </RestaurantGrid>
+              </>
+            }
+          />
+          <Route path="/restaurant/:id" element={<Box>Restaurant Detail Page</Box>} />
+          <Route path="/search" element={<Box>Search Results Page</Box>} />
+          <Route path="/addresses" element={<Box>Address Selection Page</Box>} />
+          <Route path="/notifications" element={<Box>Notifications Page</Box>} />
+          <Route path="/grocery" element={<Box>Grocery Page</Box>} />
+          <Route path="/browse" element={<Box>Browse Page</Box>} />
+          <Route path="/cart" element={<Box>Cart Page</Box>} />
+          <Route path="/account" element={<Box>Account Page</Box>} />
+        </Routes>
+      </MainContainer>
+
+      <BottomNav
+        cartItemCount={cartItemCount}
+        notificationCount={notificationCount}
+      />
+    </Box>
+  );
+}
+
+function App() {
+  return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        <Box sx={{ minHeight: '100vh' }}>
-          <Header
-            currentAddress={currentAddress}
-            notificationCount={notificationCount}
-            onAddressClick={handleAddressClick}
-            onNotificationClick={handleNotificationClick}
-            onSearch={handleSearch}
-          />
-          
-          <MainContainer>
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <>
-                    <CategoryNav
-                      categories={categories}
-                      selectedCategory={selectedCategory}
-                      onCategorySelect={handleCategorySelect}
-                      onFilterSelect={handleFilterSelect}
-                      onSortSelect={handleSortSelect}
-                    />
-                    <RestaurantGrid>
-                      {filteredRestaurants.map((restaurant) => (
-                        <RestaurantCard
-                          key={restaurant.id}
-                          restaurant={restaurant}
-                          onFavoriteClick={handleFavoriteClick}
-                          onClick={handleRestaurantClick}
-                        />
-                      ))}
-                    </RestaurantGrid>
-                  </>
-                }
-              />
-              <Route path="/restaurant/:id" element={<Box>Restaurant Detail Page</Box>} />
-              <Route path="/search" element={<Box>Search Results Page</Box>} />
-              <Route path="/addresses" element={<Box>Address Selection Page</Box>} />
-              <Route path="/notifications" element={<Box>Notifications Page</Box>} />
-              <Route path="/grocery" element={<Box>Grocery Page</Box>} />
-              <Route path="/browse" element={<Box>Browse Page</Box>} />
-              <Route path="/cart" element={<Box>Cart Page</Box>} />
-              <Route path="/account" element={<Box>Account Page</Box>} />
-            </Routes>
-          </MainContainer>
-
-          <BottomNav
-            cartItemCount={cartItemCount}
-            notificationCount={notificationCount}
-          />
-        </Box>
+        <AppContent />
       </Router>
     </ThemeProvider>
   );
