@@ -64,12 +64,12 @@ const Header: React.FC<HeaderProps> = ({
             }}
           >
             <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>
-              Deliver now
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            Deliver now
+          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Typography variant="body1" color="text.secondary" sx={{ ml: 1 }}>
                 {currentAddress.address}
-              </Typography>
+            </Typography>
               <KeyboardArrowDownIcon color="action" />
             </Box>
           </Box>
@@ -83,17 +83,17 @@ const Header: React.FC<HeaderProps> = ({
             </Badge>
           </IconButton>
         </Box>
-        
-        <Search>
-          <SearchIconWrapper>
-            <SearchIcon />
-          </SearchIconWrapper>
-          <StyledInputBase
-            placeholder="Search Uber Eats"
-            inputProps={{ 'aria-label': 'search' }}
+
+          <Search>
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Search Uber Eats"
+              inputProps={{ 'aria-label': 'search' }}
             onChange={(e) => onSearch(e.target.value)}
-          />
-        </Search>
+            />
+          </Search>
       </Toolbar>
     </AppBar>
   );

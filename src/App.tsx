@@ -179,9 +179,9 @@ function App() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
         <Box sx={{ minHeight: '100vh' }}>
           <Header
             currentAddress={currentAddress}
@@ -192,7 +192,7 @@ function App() {
           />
           
           <MainContainer>
-            <Routes>
+          <Routes>
               <Route
                 path="/"
                 element={
@@ -229,7 +229,7 @@ function App() {
               <Route path="/browse" element={<Box>Browse Page</Box>} />
               <Route path="/cart" element={<Box>Cart Page</Box>} />
               <Route path="/account" element={<Box>Account Page</Box>} />
-            </Routes>
+          </Routes>
           </MainContainer>
 
           <BottomNav
@@ -237,8 +237,8 @@ function App() {
             notificationCount={notificationCount}
           />
         </Box>
-      </Router>
-    </ThemeProvider>
+        </Router>
+      </ThemeProvider>
   );
 }
 
