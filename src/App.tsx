@@ -143,7 +143,7 @@ const currentAddress: DeliveryAddress = {
 function App() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [cartItemCount, setCartItemCount] = useState(2);
-  const [notificationCount, setNotificationCount] = useState(1);
+  const [notificationCount] = useState(1);
   const [activeFilters, setActiveFilters] = useState({
     rating: 0,
     priceRange: [] as string[],
@@ -157,13 +157,11 @@ function App() {
   };
 
   const handleFavoriteClick = (restaurantId: string) => {
-    const updatedRestaurants = mockRestaurants.map(restaurant => {
+    mockRestaurants.forEach(restaurant => {
       if (restaurant.id === restaurantId) {
-        return { ...restaurant, isLiked: !restaurant.isLiked };
+        restaurant.isLiked = !restaurant.isLiked;
       }
-      return restaurant;
     });
-    // Force re-render with updated restaurants
     setCartItemCount(prev => prev);
   };
 
