@@ -7,11 +7,10 @@ export interface LoginCredentials {
 }
 
 export interface RegisterData {
-  email: string;
-  password: string;
   firstName: string;
   lastName: string;
-  phone?: string;
+  email: string;
+  password: string;
 }
 
 export interface AuthResponse {
@@ -19,15 +18,19 @@ export interface AuthResponse {
   token: string;
 }
 
+// Event to notify components of auth state changes
+const authStateChange = new EventTarget();
+export const AUTH_STATE_CHANGE = 'authStateChange';
+
 export const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
   const response = await api.post<AuthResponse>('/auth/login', credentials);
-  localStorage.setItem('token', response.data.token);
+  handleAuthResponse(response.data);
   return response.data;
 };
 
 export const register = async (data: RegisterData): Promise<AuthResponse> => {
   const response = await api.post<AuthResponse>('/auth/register', data);
-  localStorage.setItem('token', response.data.token);
+  handleAuthResponse(response.data);
   return response.data;
 };
 
@@ -36,19 +39,49 @@ export const logout = async (): Promise<void> => {
     await api.post('/auth/logout');
   } finally {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    notifyAuthStateChange();
   }
 };
 
 export const refreshToken = async (): Promise<string> => {
-  const response = await api.post<{ token: string }>('/auth/refresh');
-  return response.data.token;
+  try {
+    const response = await api.post<{ token: string }>('/auth/refresh');
+    const { token } = response.data;
+    localStorage.setItem('token', token);
+    return token;
+  } catch (error) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    notifyAuthStateChange();
+    throw error;
+  }
 };
 
-export const getCurrentUser = async (): Promise<User> => {
-  const response = await api.get<User>('/auth/me');
-  return response.data;
+export const getCurrentUser = (): User | null => {
+  const userStr = localStorage.getItem('user');
+  return userStr ? JSON.parse(userStr) : null;
 };
 
 export const isAuthenticated = (): boolean => {
   return !!localStorage.getItem('token');
+};
+
+// Helper functions
+const handleAuthResponse = (data: AuthResponse) => {
+  localStorage.setItem('token', data.token);
+  localStorage.setItem('user', JSON.stringify(data.user));
+  notifyAuthStateChange();
+};
+
+const notifyAuthStateChange = () => {
+  authStateChange.dispatchEvent(new Event(AUTH_STATE_CHANGE));
+};
+
+// Subscribe to auth state changes
+export const onAuthStateChange = (callback: () => void) => {
+  authStateChange.addEventListener(AUTH_STATE_CHANGE, callback);
+  return () => {
+    authStateChange.removeEventListener(AUTH_STATE_CHANGE, callback);
+  };
 }; 
