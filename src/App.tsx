@@ -10,6 +10,7 @@ import Header from './components/layout/Header';
 import BottomNav from './components/layout/BottomNav';
 import CategoryNav from './components/home/CategoryNav';
 import RestaurantCard from './components/restaurant/RestaurantCard';
+import GroceryPage from './pages/grocery/GroceryPage';
 
 // Types
 import { Restaurant, DeliveryAddress, Category } from './types/restaurant';
@@ -292,11 +293,11 @@ function AppContent() {
               </>
             }
           />
+          <Route path="/grocery" element={<GroceryPage />} />
           <Route path="/restaurant/:id" element={<Box>Restaurant Detail Page</Box>} />
           <Route path="/search" element={<Box>Search Results Page</Box>} />
           <Route path="/addresses" element={<Box>Address Selection Page</Box>} />
           <Route path="/notifications" element={<Box>Notifications Page</Box>} />
-          <Route path="/grocery" element={<Box>Grocery Page</Box>} />
           <Route path="/browse" element={<Box>Browse Page</Box>} />
           <Route path="/cart" element={<Box>Cart Page</Box>} />
           <Route path="/account" element={<Box>Account Page</Box>} />

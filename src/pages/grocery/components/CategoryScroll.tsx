@@ -8,15 +8,16 @@ interface Category {
   icon: string;
 }
 
-interface CategorySectionProps {
+interface CategoryScrollProps {
   categories: Category[];
 }
 
 const ScrollContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   overflowX: 'auto',
-  gap: theme.spacing(4),
+  gap: theme.spacing(3),
   padding: theme.spacing(2, 0),
+  marginBottom: theme.spacing(3),
   '&::-webkit-scrollbar': {
     display: 'none',
   },
@@ -29,7 +30,7 @@ const CategoryItem = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   gap: theme.spacing(1),
   cursor: 'pointer',
-  minWidth: '60px',
+  minWidth: '80px',
   '&:hover': {
     opacity: 0.8,
   },
@@ -42,27 +43,32 @@ const IconContainer = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   fontSize: '24px',
-  backgroundColor: theme.palette.grey[100],
-  borderRadius: '12px',
+  marginBottom: theme.spacing(0.5),
 }));
 
-const CategorySection: React.FC<CategorySectionProps> = ({ categories }) => {
+const CategoryScroll: React.FC<CategoryScrollProps> = ({ categories }) => {
   return (
-    <Box sx={{ mb: 4 }}>
-      <ScrollContainer>
-        {categories.map((category) => (
-          <CategoryItem key={category.id}>
-            <IconContainer>
-              {category.icon}
-            </IconContainer>
-            <Typography variant="body2" align="center" sx={{ fontSize: '0.875rem' }}>
-              {category.name}
-            </Typography>
-          </CategoryItem>
-        ))}
-      </ScrollContainer>
-    </Box>
+    <ScrollContainer>
+      {categories.map((category) => (
+        <CategoryItem key={category.id}>
+          <IconContainer>
+            {category.icon}
+          </IconContainer>
+          <Typography
+            variant="body2"
+            align="center"
+            sx={{
+              fontSize: '0.875rem',
+              fontWeight: 500,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {category.name}
+          </Typography>
+        </CategoryItem>
+      ))}
+    </ScrollContainer>
   );
 };
 
-export default CategorySection; 
+export default CategoryScroll; 

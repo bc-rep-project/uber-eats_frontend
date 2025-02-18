@@ -1,10 +1,19 @@
 import React from 'react';
-import { Box, Typography, Container, TextField, InputAdornment } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Container,
+  TextField,
+  InputAdornment,
+  Grid,
+} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
-import CategorySection from './components/CategorySection';
+
+// Components
+import CategoryScroll from './components/CategoryScroll';
 import FeaturedStores from './components/FeaturedStores';
-import StoreList from './components/StoreList';
+import StoreSection from './components/StoreSection';
 import DailyOffers from './components/DailyOffers';
 
 const SearchBar = styled(TextField)(({ theme }) => ({
@@ -12,7 +21,13 @@ const SearchBar = styled(TextField)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
-      border: 'none',
+      borderColor: 'transparent',
+    },
+    '&:hover fieldset': {
+      borderColor: 'transparent',
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: 'transparent',
     },
   },
 }));
@@ -34,26 +49,44 @@ const featuredStores = [
   {
     id: '1',
     name: 'Lucky California',
-    deliveryTime: '30-50 min',
-    deliveryFee: 0.99,
-    imageUrl: 'https://tb-static.uber.com/prod/image-proc/processed_images/3c3d111e7d53fa962724747d0d16fe67/719c6bd2757b08684c0faae44d43159d.jpeg',
-    hasOffers: true,
+    deliveryTime: '30-50',
+    imageUrl: 'path_to_lucky_image',
+    offers: 'Offers available',
   },
   {
     id: '2',
     name: 'Cardenas Market',
-    deliveryTime: '40-60 min',
-    deliveryFee: 0.99,
-    imageUrl: 'https://tb-static.uber.com/prod/image-proc/processed_images/9e0c6236d4821f3b1e88b727133af9a1/719c6bd2757b08684c0faae44d43159d.jpeg',
-    hasOffers: true,
+    deliveryTime: '40-60',
+    imageUrl: 'path_to_cardenas_image',
+    offers: 'Offers available',
   },
   {
     id: '3',
     name: 'Smart & Final',
-    deliveryTime: '25-45 min',
-    deliveryFee: 0.99,
-    imageUrl: 'https://tb-static.uber.com/prod/image-proc/processed_images/53f3e89c9c6e0b7921913bc79e0dc7a1/719c6bd2757b08684c0faae44d43159d.jpeg',
-    hasOffers: true,
+    deliveryTime: '25-45',
+    imageUrl: 'path_to_smart_final_image',
+    offers: 'Offers available',
+  },
+];
+
+const quickEssentials = [
+  {
+    id: '1',
+    name: 'CVS',
+    deliveryTime: '20-40',
+    deliveryFee: 4.49,
+    rating: 4.7,
+    imageUrl: 'path_to_cvs_image',
+    offers: '2 Offers Available',
+  },
+  {
+    id: '2',
+    name: 'Chevron ExtraMile',
+    deliveryTime: '15-35',
+    deliveryFee: 0,
+    rating: 4.8,
+    imageUrl: 'path_to_chevron_image',
+    offers: 'Save on Select Items',
   },
 ];
 
@@ -61,13 +94,14 @@ const GroceryPage: React.FC = () => {
   return (
     <Container maxWidth="lg">
       <Box sx={{ py: 2 }}>
-        <Typography variant="h4" component="h1" sx={{ mb: 3, fontWeight: 'bold' }}>
+        <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
           Grocery
         </Typography>
 
         <SearchBar
           fullWidth
           placeholder="Search grocery, drinks, stores"
+          variant="outlined"
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -78,10 +112,10 @@ const GroceryPage: React.FC = () => {
           sx={{ mb: 3 }}
         />
 
-        <CategorySection categories={categories} />
-        
+        <CategoryScroll categories={categories} />
+
         <Box sx={{ mb: 4 }}>
-          <Typography variant="h5" component="h2" sx={{ mb: 2, fontWeight: 'bold' }}>
+          <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
             Featured stores
           </Typography>
           <FeaturedStores stores={featuredStores} />
@@ -96,15 +130,22 @@ const GroceryPage: React.FC = () => {
               Fresh groceries delivered to your door
             </Typography>
           </Box>
-          <StoreList />
+          <StoreSection stores={quickEssentials} />
         </Box>
 
         <Box sx={{ mb: 4 }}>
-          <Typography variant="h5" component="h2" sx={{ mb: 2, fontWeight: 'bold' }}>
-            Daily offers
-          </Typography>
-          <DailyOffers />
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold' }}>
+              Quick essentials
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              From snacks and drinks to daily needs
+            </Typography>
+          </Box>
+          <StoreSection stores={quickEssentials} />
         </Box>
+
+        <DailyOffers />
       </Box>
     </Container>
   );

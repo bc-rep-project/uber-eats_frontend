@@ -1,6 +1,7 @@
 import React from 'react';
-import { Box, Card, CardContent, CardMedia, Typography, Button, Grid } from '@mui/material';
+import { Box, Typography, Card, CardContent, Grid, Chip } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import AddIcon from '@mui/icons-material/Add';
 
 interface Product {
   id: string;
@@ -11,6 +12,41 @@ interface Product {
   imageUrl: string;
 }
 
+const ProductCard = styled(Card)(({ theme }) => ({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  cursor: 'pointer',
+  '&:hover': {
+    transform: 'translateY(-4px)',
+  },
+  transition: 'transform 0.2s ease-in-out',
+}));
+
+const ProductImage = styled('img')({
+  width: '100%',
+  height: '160px',
+  objectFit: 'cover',
+});
+
+const AddButton = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  bottom: theme.spacing(1),
+  right: theme.spacing(1),
+  backgroundColor: theme.palette.common.white,
+  borderRadius: '50%',
+  width: '32px',
+  height: '32px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+  boxShadow: theme.shadows[2],
+  '&:hover': {
+    backgroundColor: theme.palette.grey[100],
+  },
+}));
+
 const products: Product[] = [
   {
     id: '1',
@@ -18,84 +54,78 @@ const products: Product[] = [
     price: 5.80,
     originalPrice: 7.30,
     calories: '110 Cal.',
-    imageUrl: 'https://tb-static.uber.com/prod/image-proc/processed_images/2e7f4b23c6d9d8f9c05d8573ab50a8b1/719c6bd2757b08684c0faae44d43159d.jpeg',
+    imageUrl: '/path_to_pancake_mix.jpg',
   },
   {
     id: '2',
+    name: 'Signature Select Grade A Pure Maple Syrup',
+    price: 10.11,
+    calories: '110 Cal.',
+    imageUrl: '/path_to_maple_syrup.jpg',
+  },
+  {
+    id: '3',
     name: 'Pearl Milling Company Complete Pancake Mix',
     price: 5.21,
     originalPrice: 6.51,
     calories: '160 Cal.',
-    imageUrl: 'https://tb-static.uber.com/prod/image-proc/processed_images/ec9d81e31e4e558e7c6b5f3c6f2a3cb3/719c6bd2757b08684c0faae44d43159d.jpeg',
+    imageUrl: '/path_to_pearl_milling.jpg',
   },
 ];
 
-const ProductCard = styled(Card)(({ theme }) => ({
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  position: 'relative',
-  cursor: 'pointer',
-  '&:hover': {
-    transform: 'translateY(-4px)',
-    transition: 'transform 0.2s ease-in-out',
-  },
-}));
-
-const AddButton = styled(Button)(({ theme }) => ({
-  position: 'absolute',
-  bottom: theme.spacing(1),
-  right: theme.spacing(1),
-  minWidth: 'auto',
-  width: '32px',
-  height: '32px',
-  borderRadius: '50%',
-  padding: 0,
-}));
-
 const DailyOffers: React.FC = () => {
   return (
-    <Grid container spacing={2}>
-      {products.map((product) => (
-        <Grid item xs={12} sm={6} md={3} key={product.id}>
-          <ProductCard>
-            <CardMedia
-              component="img"
-              height="160"
-              image={product.imageUrl}
-              alt={product.name}
-            />
-            <CardContent>
-              <Typography variant="body1" component="div" gutterBottom noWrap>
-                {product.name}
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 1 }}>
-                <Typography variant="h6" color="primary">
-                  ${product.price.toFixed(2)}
-                </Typography>
-                {product.originalPrice && (
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ textDecoration: 'line-through' }}
-                  >
-                    ${product.originalPrice.toFixed(2)}
-                  </Typography>
-                )}
+    <Box>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold' }}>
+          Prep brunch for Mom
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          From Safeway
+        </Typography>
+      </Box>
+
+      <Grid container spacing={2}>
+        {products.map((product) => (
+          <Grid item xs={12} sm={6} md={4} key={product.id}>
+            <ProductCard>
+              <Box sx={{ position: 'relative' }}>
+                <ProductImage
+                  src={product.imageUrl}
+                  alt={product.name}
+                />
+                <AddButton>
+                  <AddIcon />
+                </AddButton>
               </Box>
-              {product.calories && (
-                <Typography variant="body2" color="text.secondary">
-                  {product.calories}
+              <CardContent>
+                <Typography variant="h6" component="h3" gutterBottom noWrap>
+                  {product.name}
                 </Typography>
-              )}
-              <AddButton variant="contained" color="primary">
-                +
-              </AddButton>
-            </CardContent>
-          </ProductCard>
-        </Grid>
-      ))}
-    </Grid>
+                <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 1 }}>
+                  <Typography variant="body1" color="primary" sx={{ fontWeight: 500 }}>
+                    ${product.price.toFixed(2)}
+                  </Typography>
+                  {product.originalPrice && (
+                    <Typography variant="body2" color="text.secondary" sx={{ textDecoration: 'line-through' }}>
+                      ${product.originalPrice.toFixed(2)}
+                    </Typography>
+                  )}
+                  {product.calories && (
+                    <>
+                      <Typography color="text.secondary">•</Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {product.calories}
+                      </Typography>
+                    </>
+                  )}
+                </Box>
+              </CardContent>
+            </ProductCard>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
   );
 };
 
