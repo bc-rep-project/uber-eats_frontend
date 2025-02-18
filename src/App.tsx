@@ -313,12 +313,12 @@ function AppContent() {
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
         <AppContent />
-      </Router>
-    </ThemeProvider>
+        </Router>
+      </ThemeProvider>
   );
 }
 

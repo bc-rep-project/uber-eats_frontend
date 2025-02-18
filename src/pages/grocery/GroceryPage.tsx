@@ -1,50 +1,27 @@
 import React from 'react';
 import {
   Box,
+  Container,
   Typography,
   Grid,
   Card,
   CardMedia,
   CardContent,
-  IconButton,
   Chip,
-  TextField,
-  InputAdornment,
+  IconButton,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import SearchIcon from '@mui/icons-material/Search';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { GroceryCategory, GroceryStore } from '../../types/grocery';
 
-const SearchBar = styled(TextField)(({ theme }) => ({
-  backgroundColor: theme.palette.grey[100],
-  borderRadius: theme.shape.borderRadius,
-  '& .MuiOutlinedInput-root': {
-    '& fieldset': {
-      border: 'none',
-    },
-  },
-}));
-
-const CategoryScroll = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  overflowX: 'auto',
-  gap: theme.spacing(2),
-  padding: theme.spacing(2),
-  '&::-webkit-scrollbar': {
-    display: 'none',
-  },
-  scrollbarWidth: 'none',
-}));
-
 const CategoryCard = styled(Card)(({ theme }) => ({
-  minWidth: 100,
-  textAlign: 'center',
   cursor: 'pointer',
+  textAlign: 'center',
+  height: '100%',
   '&:hover': {
-    transform: 'translateY(-2px)',
+    transform: 'translateY(-4px)',
     transition: 'transform 0.2s ease-in-out',
   },
 }));
@@ -65,7 +42,7 @@ const categories: GroceryCategory[] = [
   { id: 'flowers', name: 'Flowers', icon: '💐' },
   { id: 'retail', name: 'Retail', icon: '📚' },
   { id: 'grocery', name: 'Grocery', icon: '🥬' },
-  { id: 'convenience', name: 'Convenience', icon: '🛍️' },
+  { id: 'convenience', name: 'Convenience', icon: '🏪' },
   { id: 'alcohol', name: 'Alcohol', icon: '🍷' },
   { id: 'gifts', name: 'Gifts', icon: '🎁' },
   { id: 'pharmacy', name: 'Pharmacy', icon: '💊' },
@@ -74,93 +51,69 @@ const categories: GroceryCategory[] = [
 const featuredStores: GroceryStore[] = [
   {
     id: '1',
-    name: 'Lucky California',
-    imageUrl: 'https://example.com/lucky.jpg',
-    rating: 4.6,
-    deliveryTime: { min: 30, max: 50 },
+    name: 'Safeway',
+    imageUrl: 'https://example.com/safeway.jpg',
+    rating: 4.7,
     deliveryFee: 0.99,
+    deliveryTime: { min: 15, max: 35 },
     isLiked: false,
+    type: 'grocery',
     offers: [{ text: 'Offers available' }],
   },
   {
     id: '2',
-    name: 'Cardenas Market',
-    imageUrl: 'https://example.com/cardenas.jpg',
-    rating: 4.7,
-    deliveryTime: { min: 40, max: 60 },
-    deliveryFee: 1.99,
+    name: 'CVS',
+    imageUrl: 'https://example.com/cvs.jpg',
+    rating: 4.8,
+    deliveryFee: 3.99,
+    deliveryTime: { min: 20, max: 40 },
     isLiked: false,
-    offers: [{ text: 'Offers available' }],
+    type: 'pharmacy',
   },
-  {
-    id: '3',
-    name: 'Smart & Final',
-    imageUrl: 'https://example.com/smart.jpg',
-    rating: 4.5,
-    deliveryTime: { min: 25, max: 45 },
-    deliveryFee: 2.99,
-    isLiked: true,
-    offers: [{ text: 'Offers available' }],
-  },
+  // Add more stores as needed
 ];
 
-const GroceryPage: React.FC = () => {
-  const handleStoreClick = (storeId: string) => {
-    // Navigate to store detail page
-  };
+interface GroceryPageProps {
+  onCategoryClick: (categoryId: string) => void;
+  onStoreClick: (storeId: string) => void;
+  onFavoriteClick: (storeId: string) => void;
+}
 
-  const handleCategoryClick = (categoryId: string) => {
-    // Filter stores by category
-  };
-
-  const handleFavoriteClick = (storeId: string, event: React.MouseEvent) => {
-    event.stopPropagation();
-    // Toggle favorite status
-  };
-
+const GroceryPage: React.FC<GroceryPageProps> = ({
+  onCategoryClick,
+  onStoreClick,
+  onFavoriteClick,
+}) => {
   return (
-    <Box sx={{ pb: 7 }}>
-      {/* Search Bar */}
-      <Box sx={{ p: 2 }}>
-        <SearchBar
-          fullWidth
-          placeholder="Search grocery, drinks, stores"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon color="action" />
-              </InputAdornment>
-            ),
-          }}
-        />
-      </Box>
+    <Container maxWidth="lg">
+      <Box sx={{ py: 4 }}>
+        {/* Categories */}
+        <Typography variant="h5" gutterBottom>
+          Browse categories
+        </Typography>
+        <Grid container spacing={2} sx={{ mb: 4 }}>
+          {categories.map((category) => (
+            <Grid item xs={4} sm={3} md={2} key={category.id}>
+              <CategoryCard onClick={() => onCategoryClick(category.id)}>
+                <CardContent>
+                  <Typography variant="h4" component="div" gutterBottom>
+                    {category.icon}
+                  </Typography>
+                  <Typography variant="body2">{category.name}</Typography>
+                </CardContent>
+              </CategoryCard>
+            </Grid>
+          ))}
+        </Grid>
 
-      {/* Categories */}
-      <CategoryScroll>
-        {categories.map((category) => (
-          <CategoryCard
-            key={category.id}
-            onClick={() => handleCategoryClick(category.id)}
-          >
-            <CardContent>
-              <Typography variant="h4" component="div" gutterBottom>
-                {category.icon}
-              </Typography>
-              <Typography variant="body2">{category.name}</Typography>
-            </CardContent>
-          </CategoryCard>
-        ))}
-      </CategoryScroll>
-
-      {/* Featured Stores */}
-      <Box sx={{ p: 2 }}>
-        <Typography variant="h6" gutterBottom>
+        {/* Featured Stores */}
+        <Typography variant="h5" gutterBottom>
           Featured stores
         </Typography>
-        <Grid container spacing={2}>
+        <Grid container spacing={3}>
           {featuredStores.map((store) => (
-            <Grid item xs={12} key={store.id}>
-              <StoreCard onClick={() => handleStoreClick(store.id)}>
+            <Grid item xs={12} sm={6} md={4} key={store.id}>
+              <StoreCard onClick={() => onStoreClick(store.id)}>
                 <Box sx={{ position: 'relative' }}>
                   <CardMedia
                     component="img"
@@ -174,8 +127,12 @@ const GroceryPage: React.FC = () => {
                       top: 8,
                       right: 8,
                       backgroundColor: 'white',
+                      '&:hover': { backgroundColor: 'white' },
                     }}
-                    onClick={(e) => handleFavoriteClick(store.id, e)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onFavoriteClick(store.id);
+                    }}
                   >
                     {store.isLiked ? (
                       <FavoriteIcon color="error" />
@@ -183,35 +140,41 @@ const GroceryPage: React.FC = () => {
                       <FavoriteBorderIcon />
                     )}
                   </IconButton>
+                  {store.offers && store.offers.length > 0 && (
+                    <Chip
+                      label={store.offers[0].text}
+                      color="success"
+                      sx={{
+                        position: 'absolute',
+                        top: 8,
+                        left: 8,
+                      }}
+                    />
+                  )}
                 </Box>
                 <CardContent>
                   <Typography variant="h6" gutterBottom>
                     {store.name}
                   </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <AccessTimeIcon fontSize="small" color="action" />
                     <Typography variant="body2" color="text.secondary">
                       {store.deliveryTime.min}-{store.deliveryTime.max} min
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      • ${store.deliveryFee.toFixed(2)} Delivery Fee
+                      •
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      ${store.deliveryFee.toFixed(2)} Delivery Fee
                     </Typography>
                   </Box>
-                  {store.offers && (
-                    <Chip
-                      label={store.offers[0].text}
-                      size="small"
-                      color="success"
-                      sx={{ mt: 1 }}
-                    />
-                  )}
                 </CardContent>
               </StoreCard>
             </Grid>
           ))}
         </Grid>
       </Box>
-    </Box>
+    </Container>
   );
 };
 

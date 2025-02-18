@@ -2,6 +2,7 @@ export interface GroceryCategory {
   id: string;
   name: string;
   icon: string;
+  description?: string;
 }
 
 export interface GroceryStore {
@@ -9,12 +10,13 @@ export interface GroceryStore {
   name: string;
   imageUrl: string;
   rating: number;
+  deliveryFee: number;
   deliveryTime: {
     min: number;
     max: number;
   };
-  deliveryFee: number;
   isLiked: boolean;
+  type: 'grocery' | 'convenience' | 'pharmacy';
   offers?: {
     text: string;
     condition?: string;
@@ -28,23 +30,35 @@ export interface GroceryProduct {
   price: number;
   originalPrice?: number;
   imageUrl: string;
-  unit?: string;
-  calories?: string;
+  unit: string;
   category: string;
   aisle?: string;
   inStock: boolean;
-}
-
-export interface GroceryOrder {
-  id: string;
-  productId: string;
   quantity: number;
-  note?: string;
-  replacementPreference?: 'SIMILAR_ITEM' | 'REFUND' | 'CONTACT_ME';
+  nutritionInfo?: {
+    servingSize: string;
+    calories: number;
+    [key: string]: any;
+  };
+  replacementPreference?: 'no_replacement' | 'similar_item' | 'contact_me';
+  specialInstructions?: string;
 }
 
 export interface GroceryAisle {
   id: string;
   name: string;
-  products: GroceryProduct[];
+  categories: string[];
+}
+
+export interface GroceryDepartment {
+  id: string;
+  name: string;
+  aisles: GroceryAisle[];
+}
+
+export interface ProductReplacement {
+  originalProduct: GroceryProduct;
+  replacementOptions: GroceryProduct[];
+  preference: 'no_replacement' | 'similar_item' | 'contact_me';
+  notes?: string;
 } 

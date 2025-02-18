@@ -90,8 +90,8 @@ const CategoryNav: React.FC<CategoryNavProps> = ({
             onClick={() => onCategorySelect(category.id)}
             variant={selectedCategory === category.id ? 'filled' : 'outlined'}
             color={selectedCategory === category.id ? 'primary' : 'default'}
-          />
-        ))}
+            />
+          ))}
       </ScrollContainer>
 
       <FilterContainer>
@@ -110,9 +110,9 @@ const CategoryNav: React.FC<CategoryNavProps> = ({
           variant="outlined"
           onClick={() => onFilterSelect('dietary')}
         />
-        <Chip
+            <Chip
           label="Sort"
-          variant="outlined"
+              variant="outlined"
           onClick={() => onSortSelect('sort')}
         />
       </FilterContainer>
