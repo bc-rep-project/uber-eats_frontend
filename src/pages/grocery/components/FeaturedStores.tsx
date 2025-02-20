@@ -2,17 +2,10 @@ import React from 'react';
 import { Box, Card, CardContent, Typography, Grid, Chip } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-
-interface Store {
-  id: string;
-  name: string;
-  deliveryTime: string;
-  imageUrl: string;
-  offers?: string;
-}
+import { GroceryStore } from '../../../services/groceryService';
 
 interface FeaturedStoresProps {
-  stores: Store[];
+  stores: GroceryStore[];
 }
 
 const StoreCard = styled(Card)(({ theme }) => ({
@@ -67,7 +60,22 @@ const FeaturedStores: React.FC<FeaturedStoresProps> = ({ stores }) => {
                 <Typography variant="body2" color="text.secondary">
                   {store.deliveryTime} min
                 </Typography>
+                {store.deliveryFee > 0 && (
+                  <>
+                    <Typography variant="body2" color="text.secondary" sx={{ mx: 0.5 }}>
+                      •
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      ${store.deliveryFee.toFixed(2)} Delivery Fee
+                    </Typography>
+                  </>
+                )}
               </Box>
+              {store.rating > 0 && (
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                  ★ {store.rating.toFixed(1)} ({store.totalRatings} ratings)
+                </Typography>
+              )}
             </CardContent>
           </StoreCard>
         </Grid>
