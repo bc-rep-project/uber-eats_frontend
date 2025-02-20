@@ -3,7 +3,9 @@ import api, { handleApiError } from './api';
 export interface GroceryCategory {
   id: string;
   name: string;
+  icon: string;
   imageUrl: string;
+  order?: number;
 }
 
 export interface GroceryStore {

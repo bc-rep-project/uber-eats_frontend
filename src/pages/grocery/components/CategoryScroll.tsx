@@ -2,6 +2,12 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { GroceryCategory } from '../../../services/groceryService';
+import FastfoodIcon from '@mui/icons-material/Fastfood';
+import LocalCafeIcon from '@mui/icons-material/LocalCafe';
+import RestaurantIcon from '@mui/icons-material/Restaurant';
+import LocalPizzaIcon from '@mui/icons-material/LocalPizza';
+import RamenDiningIcon from '@mui/icons-material/RamenDining';
+import EmojiFoodBeverageIcon from '@mui/icons-material/EmojiFoodBeverage';
 
 interface CategoryScrollProps {
   categories: GroceryCategory[];
@@ -54,6 +60,25 @@ const IconContainer = styled(Box, {
   transition: 'all 0.2s ease-in-out',
 }));
 
+const getIconComponent = (iconName: string) => {
+  switch (iconName) {
+    case 'FastfoodIcon':
+      return <FastfoodIcon />;
+    case 'LocalCafeIcon':
+      return <LocalCafeIcon />;
+    case 'RestaurantIcon':
+      return <RestaurantIcon />;
+    case 'LocalPizzaIcon':
+      return <LocalPizzaIcon />;
+    case 'RamenDiningIcon':
+      return <RamenDiningIcon />;
+    case 'EmojiFoodBeverageIcon':
+      return <EmojiFoodBeverageIcon />;
+    default:
+      return <FastfoodIcon />;
+  }
+};
+
 const CategoryScroll: React.FC<CategoryScrollProps> = ({
   categories,
   selectedCategory,
@@ -68,7 +93,7 @@ const CategoryScroll: React.FC<CategoryScrollProps> = ({
           onClick={() => onCategorySelect(category.id)}
         >
           <IconContainer isSelected={selectedCategory === category.id}>
-            {category.icon}
+            {getIconComponent(category.icon)}
           </IconContainer>
           <Typography
             variant="body2"
