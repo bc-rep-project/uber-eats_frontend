@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Box,
   Typography,
@@ -52,15 +52,28 @@ const GroceryPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadInitialData();
-  }, []);
+  const loadStores = useCallback(async () => {
+    try {
+      const params: { category?: string; search?: string } = {};
+      if (selectedCategory) params.category = selectedCategory;
+      if (searchQuery) params.search = searchQuery;
+      
+      const stores = await groceryService.getStores(params);
+      setRegularStores(stores);
 
-  useEffect(() => {
-    loadStores();
+      // Load products from the first store if available
+      if (stores.length > 0) {
+        const storeProducts = await groceryService.getStoreProducts(stores[0].id);
+        setProducts(storeProducts);
+      } else {
+        setProducts([]);
+      }
+    } catch (err) {
+      console.error('Failed to load stores:', err);
+    }
   }, [selectedCategory, searchQuery]);
 
-  const loadInitialData = async () => {
+  const loadInitialData = useCallback(async () => {
     try {
       setLoading(true);
       const [categoriesData, featuredStoresData] = await Promise.all([
@@ -76,20 +89,15 @@ const GroceryPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [loadStores]);
 
-  const loadStores = async () => {
-    try {
-      const params: { category?: string; search?: string } = {};
-      if (selectedCategory) params.category = selectedCategory;
-      if (searchQuery) params.search = searchQuery;
-      
-      const stores = await groceryService.getStores(params);
-      setRegularStores(stores);
-    } catch (err) {
-      console.error('Failed to load stores:', err);
-    }
-  };
+  useEffect(() => {
+    loadInitialData();
+  }, [loadInitialData]);
+
+  useEffect(() => {
+    loadStores();
+  }, [loadStores]);
 
   const handleCategorySelect = (categoryId: string) => {
     setSelectedCategory(prevCategory => prevCategory === categoryId ? null : categoryId);
