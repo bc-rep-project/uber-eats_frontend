@@ -52,21 +52,21 @@ const featuredStores = [
     id: '1',
     name: 'Lucky California',
     deliveryTime: '30-50',
-    imageUrl: 'path_to_lucky_image',
+    imageUrl: STORE_IMAGES.LUCKY,
     offers: 'Offers available',
   },
   {
     id: '2',
     name: 'Cardenas Market',
     deliveryTime: '40-60',
-    imageUrl: 'path_to_cardenas_image',
+    imageUrl: STORE_IMAGES.CARDENAS,
     offers: 'Offers available',
   },
   {
     id: '3',
     name: 'Smart & Final',
     deliveryTime: '25-45',
-    imageUrl: 'path_to_smart_final_image',
+    imageUrl: STORE_IMAGES.SMART_FINAL,
     offers: 'Offers available',
   },
 ];
@@ -78,7 +78,7 @@ const quickEssentials = [
     deliveryTime: '20-40',
     deliveryFee: 4.49,
     rating: 4.7,
-    imageUrl: 'path_to_cvs_image',
+    imageUrl: STORE_IMAGES.CVS,
     offers: '2 Offers Available',
   },
   {
@@ -87,8 +87,34 @@ const quickEssentials = [
     deliveryTime: '15-35',
     deliveryFee: 0,
     rating: 4.8,
-    imageUrl: 'path_to_chevron_image',
+    imageUrl: STORE_IMAGES.CHEVRON,
     offers: 'Save on Select Items',
+  },
+];
+
+const products = [
+  {
+    id: '1',
+    name: 'Birch Benders Organic Buttermilk Pancake Mix',
+    price: 5.80,
+    originalPrice: 7.30,
+    calories: '110 Cal.',
+    imageUrl: PRODUCT_IMAGES.PANCAKE_MIX,
+  },
+  {
+    id: '2',
+    name: 'Signature Select Grade A Pure Maple Syrup',
+    price: 10.11,
+    calories: '110 Cal.',
+    imageUrl: PRODUCT_IMAGES.MAPLE_SYRUP,
+  },
+  {
+    id: '3',
+    name: 'Pearl Milling Company Complete Pancake Mix',
+    price: 5.21,
+    originalPrice: 6.51,
+    calories: '160 Cal.',
+    imageUrl: PRODUCT_IMAGES.PANCAKE_MIX_2,
   },
 ];
 
@@ -147,7 +173,7 @@ const GroceryPage: React.FC = () => {
           <StoreSection stores={quickEssentials} />
         </Box>
 
-        <DailyOffers />
+        <DailyOffers products={products} />
       </Box>
     </Container>
   );

@@ -12,6 +12,10 @@ interface Product {
   imageUrl: string;
 }
 
+interface DailyOffersProps {
+  products: Product[];
+}
+
 const ProductCard = styled(Card)(({ theme }) => ({
   height: '100%',
   display: 'flex',
@@ -47,33 +51,7 @@ const AddButton = styled(Box)(({ theme }) => ({
   },
 }));
 
-const products: Product[] = [
-  {
-    id: '1',
-    name: 'Birch Benders Organic Buttermilk Pancake Mix',
-    price: 5.80,
-    originalPrice: 7.30,
-    calories: '110 Cal.',
-    imageUrl: '/path_to_pancake_mix.jpg',
-  },
-  {
-    id: '2',
-    name: 'Signature Select Grade A Pure Maple Syrup',
-    price: 10.11,
-    calories: '110 Cal.',
-    imageUrl: '/path_to_maple_syrup.jpg',
-  },
-  {
-    id: '3',
-    name: 'Pearl Milling Company Complete Pancake Mix',
-    price: 5.21,
-    originalPrice: 6.51,
-    calories: '160 Cal.',
-    imageUrl: '/path_to_pearl_milling.jpg',
-  },
-];
-
-const DailyOffers: React.FC = () => {
+const DailyOffers: React.FC<DailyOffersProps> = ({ products }) => {
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
