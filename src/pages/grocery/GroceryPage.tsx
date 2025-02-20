@@ -5,7 +5,6 @@ import {
   Container,
   TextField,
   InputAdornment,
-  Grid,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
@@ -15,6 +14,9 @@ import CategoryScroll from './components/CategoryScroll';
 import FeaturedStores from './components/FeaturedStores';
 import StoreSection from './components/StoreSection';
 import DailyOffers from './components/DailyOffers';
+
+// Constants
+import { STORE_IMAGES, PRODUCT_IMAGES } from './constants';
 
 const SearchBar = styled(TextField)(({ theme }) => ({
   backgroundColor: theme.palette.grey[100],

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Card, CardContent, Grid, Chip } from '@mui/material';
+import { Box, Typography, Card, CardContent, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
 
