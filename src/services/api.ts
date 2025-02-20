@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { refreshToken } from './auth';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = 'https://uber-eats-backend-mnpd.onrender.com';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -24,10 +24,18 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor for token refresh
+// Response interceptor for token refresh and error handling
 api.interceptors.response.use(
   response => response,
   async error => {
+    if (!error.response) {
+      // Network error
+      return Promise.reject({
+        message: 'Network error - please check your connection',
+        code: 'NETWORK_ERROR'
+      });
+    }
+
     const originalRequest = error.config;
 
     if (error.response.status === 401 && !originalRequest._retry) {
@@ -39,14 +47,13 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        // Handle refresh token error (e.g., redirect to login)
         localStorage.removeItem('token');
         window.location.href = '/login';
         return Promise.reject(refreshError);
       }
     }
 
-    return Promise.reject(error);
+    return Promise.reject(error.response.data || error);
   }
 );
 

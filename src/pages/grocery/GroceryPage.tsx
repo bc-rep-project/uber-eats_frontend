@@ -68,24 +68,32 @@ const GroceryPage: React.FC = () => {
       } else {
         setProducts([]);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to load stores:', err);
+      setError(err.message || 'Failed to load stores');
+      setRegularStores([]);
+      setProducts([]);
     }
   }, [selectedCategory, searchQuery]);
 
   const loadInitialData = useCallback(async () => {
     try {
       setLoading(true);
+      setError(null);
+      
       const [categoriesData, featuredStoresData] = await Promise.all([
         groceryService.getCategories(),
         groceryService.getStores({ featured: true }),
       ]);
+      
       setCategories(categoriesData);
       setFeaturedStores(featuredStoresData);
       await loadStores();
-    } catch (err) {
-      setError('Failed to load grocery data');
-      console.error(err);
+    } catch (err: any) {
+      console.error('Failed to load grocery data:', err);
+      setError(err.message || 'Failed to load grocery data');
+      setCategories([]);
+      setFeaturedStores([]);
     } finally {
       setLoading(false);
     }

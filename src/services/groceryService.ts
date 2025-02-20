@@ -1,10 +1,9 @@
-import api from './api';
+import api, { handleApiError } from './api';
 
 export interface GroceryCategory {
   id: string;
   name: string;
-  icon: string;
-  order: number;
+  imageUrl: string;
 }
 
 export interface GroceryStore {
@@ -18,40 +17,35 @@ export interface GroceryStore {
   rating: number;
   totalRatings: number;
   categories: string[];
-  offers?: string;
+  offers: string[];
   isFeatured: boolean;
-  address: {
-    street: string;
-    city: string;
-    state: string;
-    zipCode: string;
-  };
-  operatingHours: Array<{
-    day: number;
-    open: string;
-    close: string;
-  }>;
+  address: string;
+  operatingHours: string;
 }
 
 export interface GroceryProduct {
   id: string;
   storeId: string;
   name: string;
-  description?: string;
+  description: string;
   price: number;
-  originalPrice?: number;
-  calories?: string;
+  originalPrice: number;
+  calories: number;
   imageUrl: string;
   category: string;
   inStock: boolean;
   unit: string;
 }
 
-export const groceryService = {
+const groceryService = {
   // Get all grocery categories
   async getCategories(): Promise<GroceryCategory[]> {
-    const response = await api.get<GroceryCategory[]>('/api/grocery/categories');
-    return response.data;
+    try {
+      const response = await api.get('/grocery/categories');
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
   },
 
   // Get grocery stores with optional filters
@@ -60,14 +54,22 @@ export const groceryService = {
     featured?: boolean;
     search?: string;
   }): Promise<GroceryStore[]> {
-    const response = await api.get<GroceryStore[]>('/api/grocery/stores', { params });
-    return response.data;
+    try {
+      const response = await api.get('/grocery/stores', { params });
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
   },
 
   // Get a specific grocery store
   async getStore(storeId: string): Promise<GroceryStore> {
-    const response = await api.get<GroceryStore>(`/api/grocery/stores/${storeId}`);
-    return response.data;
+    try {
+      const response = await api.get(`/grocery/stores/${storeId}`);
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
   },
 
   // Get products for a specific store
@@ -75,15 +77,22 @@ export const groceryService = {
     category?: string;
     search?: string;
   }): Promise<GroceryProduct[]> {
-    const response = await api.get<GroceryProduct[]>(
-      `/api/grocery/stores/${storeId}/products`,
-      { params }
-    );
-    return response.data;
+    try {
+      const response = await api.get(`/grocery/stores/${storeId}/products`, { params });
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
   },
 
   // Rate a grocery store
   async rateStore(storeId: string, rating: number): Promise<void> {
-    await api.post(`/api/grocery/stores/${storeId}/rate`, { rating });
+    try {
+      await api.post(`/grocery/stores/${storeId}/rate`, { rating });
+    } catch (error) {
+      throw handleApiError(error);
+    }
   }
-}; 
+};
+
+export default groceryService; 
