@@ -17,7 +17,7 @@ import StoreSection from './components/StoreSection';
 import DailyOffers from './components/DailyOffers';
 
 // Services and Types
-import { groceryService, GroceryCategory, GroceryStore, GroceryProduct } from '../../services/groceryService';
+import groceryService, { GroceryCategory, GroceryStore, GroceryProduct } from '../../services/groceryService';
 
 const SearchBar = styled(TextField)(({ theme }) => ({
   backgroundColor: theme.palette.grey[100],

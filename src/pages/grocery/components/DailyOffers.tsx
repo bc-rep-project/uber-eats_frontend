@@ -2,18 +2,10 @@ import React from 'react';
 import { Box, Typography, Card, CardContent, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  originalPrice?: number;
-  calories?: string;
-  imageUrl: string;
-}
+import { GroceryProduct } from '../../../services/groceryService';
 
 interface DailyOffersProps {
-  products: Product[];
+  products: GroceryProduct[];
 }
 
 const ProductCard = styled(Card)(({ theme }) => ({
@@ -93,7 +85,7 @@ const DailyOffers: React.FC<DailyOffersProps> = ({ products }) => {
                     <>
                       <Typography color="text.secondary">•</Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {product.calories}
+                        {product.calories} cal
                       </Typography>
                     </>
                   )}

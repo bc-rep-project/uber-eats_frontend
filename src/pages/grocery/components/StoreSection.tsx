@@ -4,19 +4,10 @@ import { styled } from '@mui/material/styles';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-
-interface Store {
-  id: string;
-  name: string;
-  deliveryTime: string;
-  deliveryFee: number;
-  rating: number;
-  imageUrl: string;
-  offers?: string;
-}
+import { GroceryStore } from '../../../services/groceryService';
 
 interface StoreSectionProps {
-  stores: Store[];
+  stores: GroceryStore[];
 }
 
 const StoreCard = styled(Card)(({ theme }) => ({
@@ -71,9 +62,9 @@ const StoreSection: React.FC<StoreSectionProps> = ({ stores }) => {
                 src={store.imageUrl}
                 alt={store.name}
               />
-              {store.offers && (
+              {store.offers && store.offers.length > 0 && (
                 <OffersChip
-                  label={store.offers}
+                  label={store.offers[0]}
                   size="small"
                 />
               )}
