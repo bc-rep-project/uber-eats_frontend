@@ -6,6 +6,8 @@ import {
   TextField,
   InputAdornment,
   CircularProgress,
+  Alert,
+  Snackbar,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
@@ -51,6 +53,7 @@ const GroceryPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showError, setShowError] = useState(false);
 
   const loadStores = useCallback(async () => {
     try {
@@ -69,10 +72,8 @@ const GroceryPage: React.FC = () => {
         setProducts([]);
       }
     } catch (err: any) {
-      console.error('Failed to load stores:', err);
-      setError(err.message || 'Failed to load stores');
-      setRegularStores([]);
-      setProducts([]);
+      setError('Failed to load stores. Please try again later.');
+      setShowError(true);
     }
   }, [selectedCategory, searchQuery]);
 
@@ -90,10 +91,8 @@ const GroceryPage: React.FC = () => {
       setFeaturedStores(featuredStoresData);
       await loadStores();
     } catch (err: any) {
-      console.error('Failed to load grocery data:', err);
-      setError(err.message || 'Failed to load grocery data');
-      setCategories([]);
-      setFeaturedStores([]);
+      setError('Failed to load grocery data. Please try again later.');
+      setShowError(true);
     } finally {
       setLoading(false);
     }
@@ -104,8 +103,10 @@ const GroceryPage: React.FC = () => {
   }, [loadInitialData]);
 
   useEffect(() => {
-    loadStores();
-  }, [loadStores]);
+    if (!loading) {
+      loadStores();
+    }
+  }, [loadStores, loading]);
 
   const handleCategorySelect = (categoryId: string) => {
     setSelectedCategory(prevCategory => prevCategory === categoryId ? null : categoryId);
@@ -113,6 +114,10 @@ const GroceryPage: React.FC = () => {
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
+  };
+
+  const handleCloseError = () => {
+    setShowError(false);
   };
 
   if (loading) {
@@ -123,18 +128,14 @@ const GroceryPage: React.FC = () => {
     );
   }
 
-  if (error) {
-    return (
-      <Container maxWidth="lg">
-        <Box sx={{ py: 4, textAlign: 'center' }}>
-          <Typography color="error">{error}</Typography>
-        </Box>
-      </Container>
-    );
-  }
-
   return (
     <Container maxWidth="lg">
+      <Snackbar open={showError} autoHideDuration={6000} onClose={handleCloseError}>
+        <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
+          {error}
+        </Alert>
+      </Snackbar>
+
       <Box sx={{ py: 2 }}>
         <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
           Grocery

@@ -44,9 +44,10 @@ const groceryService = {
   async getCategories(): Promise<GroceryCategory[]> {
     try {
       const response = await api.get('/grocery/categories');
-      return response.data;
+      return response.data || [];
     } catch (error) {
-      throw handleApiError(error);
+      console.error('Failed to fetch categories:', error);
+      return [];
     }
   },
 
@@ -58,19 +59,21 @@ const groceryService = {
   }): Promise<GroceryStore[]> {
     try {
       const response = await api.get('/grocery/stores', { params });
-      return response.data;
+      return response.data || [];
     } catch (error) {
-      throw handleApiError(error);
+      console.error('Failed to fetch stores:', error);
+      return [];
     }
   },
 
   // Get a specific grocery store
-  async getStore(storeId: string): Promise<GroceryStore> {
+  async getStore(storeId: string): Promise<GroceryStore | null> {
     try {
       const response = await api.get(`/grocery/stores/${storeId}`);
       return response.data;
     } catch (error) {
-      throw handleApiError(error);
+      console.error('Failed to fetch store:', error);
+      return null;
     }
   },
 
@@ -81,9 +84,10 @@ const groceryService = {
   }): Promise<GroceryProduct[]> {
     try {
       const response = await api.get(`/grocery/stores/${storeId}/products`, { params });
-      return response.data;
+      return response.data || [];
     } catch (error) {
-      throw handleApiError(error);
+      console.error('Failed to fetch products:', error);
+      return [];
     }
   },
 
@@ -92,6 +96,7 @@ const groceryService = {
     try {
       await api.post(`/grocery/stores/${storeId}/rate`, { rating });
     } catch (error) {
+      console.error('Failed to rate store:', error);
       throw handleApiError(error);
     }
   }
